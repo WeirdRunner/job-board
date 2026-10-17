@@ -692,3 +692,16 @@ details.gut .evidence { margin-bottom: 14px; }
   .o-loglist li { grid-template-columns: 1fr auto; }
   .pf-k { flex-basis: 110px; }
 }
+.checks { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 6px; }
+.checks li { display: grid; grid-template-columns: 22px 1fr; gap: 6px; align-items: start; font-size: 14px; }
+.ck { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; font-size: 11px; font-weight: 700; margin-top: 2px; }
+.ck.ok { background: var(--good-bg); color: var(--good); }
+.ck.warn { background: var(--later-bg); color: var(--later); }
+.ck.bad { background: var(--bad-bg); color: var(--bad); }
+.pj { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
+.pj summary { cursor: pointer; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.paste { white-space: pre-wrap; font: 12px/1.5 var(--mono); background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: 8px; padding: 8px 10px; margin: 6px 0; max-height: 180px; overflow: auto; }
+.li-kit { border-top: 1px dashed var(--line); margin-top: 8px; padding-top: 8px; }
+.extra { margin: 12px 0; }
+.extra summary { cursor: pointer; color: var(--muted); }

@@ -272,8 +272,9 @@ def carry_overrides(old: Optional[dict], new: dict) -> dict:
     switched on/off, and ones you added yourself."""
     if not old:
         return new
-    if old.get("proofs"):                  # your proof list is yours, not the resume's
-        new["proofs"] = old["proofs"]
+    for k in ("proofs", "proof_state"):     # your extra proofs and checklist ticks are yours, not the resume's
+        if old.get(k):
+            new[k] = old[k]
     legacy = "overrides" not in old        # made before edits were tracked: treat its picks as yours
     ov = dict(old.get("overrides") or {})
     new.update(ov)

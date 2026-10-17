@@ -347,6 +347,22 @@
       const want = (q.get("status") || "new").split(",");
       return jobsView().filter((j) => want.includes(j.status)).sort((a, b) => (b.match ?? -1) - (a.match ?? -1));
     }
+    if (p === "/api/proof/gh") {
+      if (!S.token) httpError("No GitHub token");
+      const path = q.get("path") || "";
+      if (!/^\/(users|repos)\/[\w.-]+(\/[\w.\-/]*)?(\?[\w=&.%-]*)?$/.test(path)) httpError("Only /users/… and /repos/… reads are allowed");
+      const r = await fetch(`https://api.github.com${path}`, { headers: { Authorization: `Bearer ${S.token}`, Accept: "application/vnd.github+json" } });
+      if (r.status === 404) httpError("Not found");
+      if (!r.ok) httpError(`GitHub ${r.status}`);
+      return r.json();
+    }
+    if (p === "/api/proof/pinned") {
+      if (!S.token) httpError("No GitHub token");
+      const login = (q.get("login") || "").replace(/"/g, "");
+      const r = await fetch("https://api.github.com/graphql", { method: "POST", headers: { Authorization: `Bearer ${S.token}` },
+        body: JSON.stringify({ query: `{ user(login: "${login}") { pinnedItems(first: 6) { nodes { ... on Repository { name } } } } }` }) });
+      return ((await r.json()).data?.user?.pinnedItems?.nodes || []).filter(Boolean).map((n) => n.name);
+    }
     if ((m = p.match(/^\/api\/jobs\/([^/]+)$/)) && method === "GET") {
       const j = jobsView().find((x) => x.id === decodeURIComponent(m[1]));
       if (!j) httpError("Not found");

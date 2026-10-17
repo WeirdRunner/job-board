@@ -1,69 +1,255 @@
-/* Proof, people and plan: the parts of a job search that research says move the odds (see docs/EVIDENCE.md).
+/* Proof, people and plan: the parts of a job search that research says move the odds (docs/EVIDENCE.md).
  *
- *  1. Proof   — which of a job's required skills you can show credible proof for (Carranza et al. 2022; Athey &
- *               Palikot 2024; Pallais 2014). Proofs live in profile.proofs.
- *  2. People  — who to reach at a company: contacts the posting itself publishes, plus searches you open yourself
- *               (nothing is scraped, nothing is sent for you), a draft built from your proof, and a log on the
- *               tracker row (contacts + channel). Weak ties and referrals: Rajkumar et al. 2022; Brown et al. 2016.
- *  3. Plan    — a written weekly plan shown against what you actually did; no reminders (Abel et al. 2019 found a
- *               plan helped and reminders added nothing). Plans live in settings.plans.
+ *  1. Proof   — what an employer actually sees when they follow your resume's links. Projects come from the resume
+ *               itself; each one is checked the way a reviewer would (public repo? description? a README that states
+ *               a measured result and how to run it? tests/CI? working demo? pinned? on LinkedIn?) with a concrete fix
+ *               for every gap. Credible, checkable signals are what moved hiring in the experiments (Carranza et al.
+ *               2022; Athey & Palikot 2024; Abel et al. 2020); a list inside this app proves nothing to anyone.
+ *  2. People  — who to reach at a company: contacts the posting publishes, searches you open yourself, a draft that
+ *               leads with your best proof for that job, and a log on the tracker row (Rajkumar et al. 2022).
+ *  3. Plan    — a written weekly plan against what you actually did; no reminders (Abel et al. 2019).
  *
- * Uses app.js globals (esc, api, toast, $, skillTerms, refreshStatus) at call time.
+ * Uses app.js globals (esc, api, toast, $, skillTerms, refreshStatus, STATIC_MODE) at call time.
  */
 const Outreach = (() => {
-  let ctx = null;                                   // { profile, links } — loaded once, refreshed after edits
+  let ctx = null;              // { profile, links, projects, extras, state } — from the profile and the resume's LaTeX
   const uid = () => Math.random().toString(36).slice(2, 10);
   const lc = (s) => String(s || "").toLowerCase();
   const enc = encodeURIComponent;
+  const today = () => new Date().toISOString().slice(0, 10);
+  const copyBtn = (text, label = "Copy") => `<button class="btn tiny" data-copy="${esc(text)}">${label}</button>`;
+
+  // ---------------------------------------------------------------- the resume's own projects
+  function groups(src, i, n) {                      // the next n balanced {…} groups from position i
+    const out = [];
+    let j = i;
+    while (out.length < n) {
+      while (j < src.length && /\s/.test(src[j])) j++;
+      if (src[j] !== "{") break;
+      let d = 0, k = j;
+      for (; k < src.length; k++) { if (src[k] === "{") d++; else if (src[k] === "}" && !--d) break; }
+      out.push(src.slice(j + 1, k));
+      j = k + 1;
+    }
+    return { out, end: j };
+  }
+  const hrefs = (s) => [...s.matchAll(/\\href\{([^}]*)\}/g)].map((m) => m[1]);
+  const detex = (s) => s.replace(/\\href\{[^}]*\}/g, "").replace(/\$\\cdot\$/g, "·").replace(/\$\\sim\$/g, "~")
+    .replace(/\\%/g, "%").replace(/\\&/g, "&").replace(/\\_/g, "_").replace(/\\(?:textit|textbf|texttt|emph|small|bf|hfill)\b\s*/g, "")
+    .replace(/\\[a-zA-Z]+\*?/g, "").replace(/[{}]/g, "").replace(/\s+/g, " ").trim();
+  // A measured result: a number with a unit, next to a word that says what was measured. "3B" in a model's name or
+  // "95% confident" is not a result; "96% accuracy", "0.15 s per job" and "81 tests in CI" are.
+  const QTY = /\d[\d,.]*\s?(%|x\b|×|ms\b|s\b|sec\b|seconds?|k\b|tokens|tests|users|requests|pp\b|points)/gi;
+  const METRIC = /accura|\bf1\b|precision|recall|latency|throughput|faster|slower|speed|benchmark|scor|\beval|\btests?\b|pass|error|loss|win rate|per (job|posting|request|second|token|item|call)|\/s\b|reduc|improv|users|downloads|uptime|ci\b/i;
+  const COUNTED = /\d[\d,]*\s(?:[a-z-]+\s)?(tests|users|requests|downloads|stars)\b/i;          // "81 backend tests"
+  const NAMED = /(accuracy|f1|precision|recall|score|latency|throughput|win rate|error rate)\W{0,12}[^\n\d]{0,30}\d/i;   // tables
+  const hasResult = (text) => { text = String(text || "");
+    return COUNTED.test(text) || NAMED.test(text) || [...text.matchAll(QTY)]
+      .some((m) => METRIC.test(text.slice(Math.max(0, m.index - 60), m.index + m[0].length + 60))); };
+
+  function projectsFromTex(tex) {
+    const body = tex.slice(Math.max(0, tex.indexOf("\\begin{document}")));
+    const out = [];
+    let at = 0;
+    while ((at = body.indexOf("\\entryheader", at)) !== -1) {
+      const { out: a, end } = groups(body, at + "\\entryheader".length, 3);
+      at = end;
+      const stops = [body.indexOf("\\entryheader", end), body.indexOf("\\section", end)].filter((x) => x > 0);
+      const chunk = body.slice(end, stops.length ? Math.min(...stops) : body.length);
+      const items = chunk.split("\\item").slice(1).map((x) => x.replace(/\\end\{tightitemize\}[\s\S]*$/, ""));
+      const head = a[0] || "", urls = hrefs(head);
+      if (!urls.length && items.some((it) => hrefs(it).length)) {        // a job: each linked bullet is a project
+        for (const it of items) {
+          const u = hrefs(it);
+          if (!u.length) continue;
+          const t = detex(it), [nm, ...rest] = t.split(":");
+          out.push({ name: nm.trim(), urls: u, desc: rest.join(":").trim(), stack: "", bullets: [rest.join(":").trim() || t], where: detex(head) });
+        }
+        continue;
+      }
+      if (!urls.length) continue;                                          // education and the like
+      const title = detex(head);
+      out.push({ name: title.split(" - ")[0].trim(), urls, desc: title.split(" - ").slice(1).join(" - ").trim(),
+                 stack: detex(a[2] || ""), bullets: items.map(detex).filter(Boolean) });
+    }
+    return out;
+  }
+
+  const repoOf = (urls) => {
+    for (const u of urls || []) {
+      const m = u.match(/github\.com\/([\w.-]+)\/([\w.-]+?)(?:\.git)?(?:[/#?].*)?$/i);
+      if (m && !/^(orgs|users|settings)$/i.test(m[1])) return { owner: m[1], name: m[2], url: u };
+    }
+    return null;
+  };
+  const liveOf = (urls) => (urls || []).find((u) => /^https?:/.test(u) && !/github\.com|linkedin\.com|mailto:|tel:/i.test(u));
 
   async function load(force = false) {
     if (ctx && !force) return ctx;
     const profile = (await api("/api/profile").catch(() => null)) || {};
-    const links = { github: profile.github || "", linkedin: profile.linkedin || "", school: profile.school || "" };
-    if (!links.github || !links.linkedin || !links.school) {          // fill gaps from the resume's own links
-      const tex = (await api("/api/resume").catch(() => null))?.tex || "";
-      links.github ||= (tex.match(/https?:\/\/(?:www\.)?github\.com\/[\w-]+(?=[}\s/])/) || [""])[0];
-      links.linkedin ||= (tex.match(/https?:\/\/(?:www\.)?linkedin\.com\/in\/[\w-]+\/?/) || [""])[0];
+    const tex = (await api("/api/resume").catch(() => null))?.tex || "";
+    const projects = tex ? projectsFromTex(tex) : [];
+    const ghProfile = (tex.match(/https?:\/\/(?:www\.)?github\.com\/([\w-]+)\/?(?=[}\s])/) || [])[0] || "";
+    const links = {
+      github: profile.github || ghProfile, resumeGithub: ghProfile,
+      linkedin: profile.linkedin || (tex.match(/https?:\/\/(?:www\.)?linkedin\.com\/in\/[\w-]+\/?/) || [""])[0],
       // The university first: a wider alumni network than a single college.
-      links.school ||= (tex.match(/University of [A-Z]\w+(?: [A-Z]\w+)?|[A-Z][\w.]+(?: [A-Z][\w.]+)* (?:University|Institute of Technology)/)
-        || tex.match(/[A-Z][\w.]+(?: [A-Z][\w.]+)* College/) || [""])[0];
-    }
-    ctx = { profile, links, proofs: profile.proofs || [] };
+      school: profile.school || (tex.match(/University of [A-Z]\w+(?: [A-Z]\w+)?|[A-Z][\w.]+(?: [A-Z][\w.]+)* (?:University|Institute of Technology)/)
+        || tex.match(/[A-Z][\w.]+(?: [A-Z][\w.]+)* College/) || [""])[0],
+    };
+    ctx = { profile, links, projects, extras: profile.proofs || [], state: profile.proof_state || {}, hasTex: !!tex };
     return ctx;
   }
 
-  // ---------------------------------------------------------------- proof
-  const covers = (proof, skill) => {
-    const want = skillTerms([skill]).map(lc);
-    return (proof.skills || []).some((s) => skillTerms([s]).map(lc).some((t) => want.includes(t)));
-  };
+  // ---------------------------------------------------------------- what GitHub shows a reviewer (cached 6 h)
+  const AUDIT_KEY = "proof-audit-v1";
+  const readAudit = () => { try { return JSON.parse(localStorage.getItem(AUDIT_KEY) || "null"); } catch (_) { return null; } };
+  async function ghGet(path) {
+    // Through the board's GitHub token when it has one (5,000 calls/hour); anonymous calls get only 60.
+    try { return await api(`/api/proof/gh?path=${enc(path)}`); }
+    catch (e) {
+      if (/^not found$/i.test(e.message)) return null;
+      if (!/no github token/i.test(e.message)) throw e;
+    }
+    const r = await fetch(`https://api.github.com${path}`, { headers: { Accept: "application/vnd.github+json" } });
+    if (r.status === 404) return null;
+    if (r.status === 403 || r.status === 429) throw new Error("GitHub's hourly limit for anonymous checks was reached — try again in an hour.");
+    if (!r.ok) throw new Error(`GitHub answered ${r.status}`);
+    return r.json();
+  }
+  const b64text = (b) => new TextDecoder().decode(Uint8Array.from(atob((b || "").replace(/\n/g, "")), (c) => c.charCodeAt(0)));
+  async function reachable(url) {
+    try { await fetch(url, { mode: "no-cors", cache: "no-store" }); return true; } catch (_) { return false; }
+  }
 
-  function proofFor(job, proofs = ctx?.proofs || []) {
-    const c = job.card || {};
+  async function audit(force = false) {
+    await load();
+    const cached = readAudit();
+    if (!force && cached && Date.now() - cached.at < 6 * 3600e3) return cached;
+    const login = (ctx.links.github.match(/github\.com\/([\w-]+)/) || [])[1];
+    const resumeLogin = (ctx.links.resumeGithub.match(/github\.com\/([\w-]+)/) || [])[1];
+    const user = login ? await ghGet(`/users/${login}`) : null;
+    const resumeUser = resumeLogin && lc(resumeLogin) !== lc(login) ? await ghGet(`/users/${resumeLogin}`) : user;
+    const repos = user ? await ghGet(`/users/${user.login}/repos?per_page=100&sort=pushed`) || [] : [];
+    let pinned = null;
+    if (user) pinned = await api(`/api/proof/pinned?login=${enc(user.login)}`).catch(() => null);
+    const out = { at: Date.now(), login: user?.login || null, bio: user?.bio || "", location: user?.location || "",
+      resumeLink: { url: ctx.links.resumeGithub, ok: !!resumeUser || !ctx.links.resumeGithub }, pinned, repos: [], projects: {} };
+    for (const p of ctx.projects) {
+      const rp = repoOf(p.urls), live = liveOf(p.urls);
+      const a = { name: p.name, repoUrl: rp?.url || null, live: live || null };
+      if (rp) {
+        const r = await ghGet(`/repos/${rp.owner}/${rp.name}`);
+        if (r) {
+          const [readme, tree, langs] = await Promise.all([
+            ghGet(`/repos/${r.full_name}/readme`).catch(() => null),
+            ghGet(`/repos/${r.full_name}/git/trees/${r.default_branch}?recursive=1`).catch(() => null),
+            ghGet(`/repos/${r.full_name}/languages`).catch(() => null)]);
+          const paths = (tree?.tree || []).map((t) => t.path);
+          const workflows = paths.some((x) => /^\.github\/workflows\/.+\.ya?ml$/.test(x));
+          const runs = workflows ? await ghGet(`/repos/${r.full_name}/actions/runs?per_page=1&branch=${enc(r.default_branch)}`).catch(() => null) : null;
+          const text = readme ? b64text(readme.content) : "";
+          a.repo = { full: r.full_name, html: r.html_url, description: r.description || "", homepage: r.homepage || "",
+            pushed: r.pushed_at, moved: lc(r.owner.login) !== lc(rp.owner), languages: Object.keys(langs || {}),
+            readmeResult: hasResult(text),
+            readmeRun: /```|pip install|npm (?:i|install|run)|## *(run|quick ?start|usage|getting started|setup)/i.test(text),
+            readmeText: text.slice(0, 20000),
+            tests: paths.some((x) => /(^|\/)(tests?|__tests__)\//.test(x) || /(^|\/)test_[^/]+\.py$|\.(test|spec)\.[jt]sx?$|_test\.go$/.test(x)),
+            workflows, ci: runs?.workflow_runs?.[0]?.conclusion || null };
+        } else a.repo = null;
+      }
+      const demo = live || a.repo?.homepage;
+      if (demo) a.demoOk = await reachable(demo);
+      out.projects[p.name] = a;
+    }
+    const onResume = new Set(Object.values(out.projects).map((a) => lc(a.repo?.full || "")));
+    out.repos = repos.filter((r) => !r.fork && !onResume.has(lc(r.full_name)) && lc(r.name) !== lc(r.owner.login))
+      .map((r) => ({ name: r.name, html: r.html_url, description: r.description || "", pushed: r.pushed_at }));
+    try { localStorage.setItem(AUDIT_KEY, JSON.stringify(out)); } catch (_) { /* storage off */ }
+    return out;
+  }
+
+  // One project, judged like a reviewer who clicks the link from your resume.
+  function checksFor(p, a, au) {
+    const r = a?.repo, out = [], add = (ok, label, fix = "", copy = "") => out.push({ ok, label, fix, copy });
+    const numeric = p.bullets.filter(hasResult);
+    add(!!(a?.repoUrl || a?.live), "Linked from your resume", "Put the repo (or demo) link in this project's heading in your resume — reviewers won't search for it.");
+    if (a?.repoUrl) {
+      if (r === null) add(false, "Repo opens", "The link 404s or the repo is private — make it public or fix the link.");
+      else if (r) {
+        add(r.moved ? "warn" : true, r.moved ? "Repo opens (only through a redirect from an old username)" : "Repo opens",
+            r.moved ? `Update the link in your resume to ${r.html}.` : "");
+        add(!!r.description, "Has a one-line description", "Add one under the repo's About ⚙ — it shows in search and on your profile.",
+            p.desc || p.bullets[0] || "");
+        add(r.readmeResult, "README states a measured result",
+            "Reviewers skim the README for one number — accuracy, speed, size, tests passing. Add a short Results section.",
+            numeric.length ? `## Results\n\n${numeric.map((b) => `- ${b}`).join("\n")}\n` : "## Results\n\n- [What you measured]: [number] ([how you measured it])\n");
+        add(r.readmeRun, "README says how to run it", "Add a Quick start with the two or three commands that run it.",
+            "## Quick start\n\n```bash\n[install command]\n[run command]\n```\n");
+        if (r.workflows) add(r.ci === "success" ? true : r.ci ? false : "warn",
+          r.ci === "success" ? "CI passing" : r.ci ? `CI is ${r.ci}` : "CI configured (no runs yet)",
+          r.ci && r.ci !== "success" ? "A red CI run is worse than none — fix it or remove the workflow." : "");
+        else add(r.tests ? "warn" : false, r.tests ? "Has tests (but no CI running them)" : "Has tests",
+          r.tests ? "Add a GitHub Actions workflow that runs them — a green check is something a stranger can verify."
+                  : "Even a few tests and a CI workflow make the claims checkable.");
+        if (au.pinned) add(au.pinned.some((n) => lc(n) === lc(r.full.split("/")[1])), "Pinned on your GitHub profile",
+          "Pin it: your profile → Customize your pins.");
+      }
+    }
+    if (a?.live || r?.homepage) add(a.demoOk ? true : false, "Live demo opens", "The demo link doesn't load — fix it or remove it.");
+    add(numeric.length ? true : "warn", "Your resume states a measured result for it", "Add one to its bullets: accuracy, speed, tests passing — something a reviewer can check.");
+    const st = ctx.state[p.name] || {};
+    add(st.linkedin ? true : "warn", "On your LinkedIn (Projects or Featured)", "Add it — paste-ready text below.");
+    return out;
+  }
+  const scoreOf = (cs) => cs.reduce((n, c) => n + (c.ok === true ? 1 : c.ok === "warn" ? 0.5 : 0), 0) / Math.max(1, cs.length);
+
+  // ---------------------------------------------------------------- proof for a job
+  const textOf = (p, a) => [p.name, p.desc, p.stack, ...p.bullets, ...(a?.repo?.languages || []), (a?.repo?.readmeText || "").slice(0, 6000)].join(" ");
+  const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  function mentions(text, skill) {
+    return skillTerms([skill]).some((t) => t.length <= 2
+      ? new RegExp(`(^|[^A-Za-z])${reEsc(t)}([^A-Za-z]|$)`).test(text)
+      : new RegExp(`(^|[^a-z0-9])${reEsc(lc(t))}([^a-z0-9]|$)`).test(lc(text)));
+  }
+  function proofs() {
+    const au = readAudit() || { projects: {} };
+    const fromResume = (ctx?.projects || []).map((p) => {
+      const a = au.projects?.[p.name];
+      return { title: p.name, url: a?.repo?.html || a?.live || p.urls[0], text: textOf(p, a),
+               note: p.bullets.find(hasResult) || "", weak: !!(a?.repo && !a.repo.readmeResult) };
+    });
+    const added = (ctx?.extras || []).map((x) => ({ title: x.title, url: x.url, text: [x.title, ...(x.skills || []), x.note || ""].join(" "), note: x.note || "" }));
+    return [...fromResume, ...added];
+  }
+  function proofFor(job) {
+    const c = job.card || {}, all = proofs();
     const have = new Set((ctx?.profile?.keywords || []).filter((k) => k.keep).map((k) => lc(k.name)));
     const required = [...new Set([...(c.skills_matched || []), ...(c.skills_gap || [])])];
     const out = { proven: [], claimed: [], missing: [], best: [] };
     for (const s of required) {
-      const p = proofs.find((x) => covers(x, s));
+      const p = all.find((x) => mentions(x.text, s));
       if (p) out.proven.push({ skill: s, proof: p });
       else if ((c.skills_matched || []).includes(s) || have.has(lc(s))) out.claimed.push(s);
       else out.missing.push(s);
     }
-    out.best = [...proofs].map((p) => ({ p, n: required.filter((s) => covers(p, s)).length }))
-      .filter((x) => x.n).sort((a, b) => b.n - a.n).slice(0, 2).map((x) => x.p);
-    if (!out.best.length && proofs.length) out.best = [proofs[0]];
+    out.best = all.map((p) => ({ p, n: required.filter((s) => mentions(p.text, s)).length }))
+      .filter((x) => x.n).sort((a, b) => b.n - a.n || Number(a.p.weak) - Number(b.p.weak)).slice(0, 2).map((x) => x.p);
     return out;
   }
 
-  // Where a skill can be proven credibly and for free (or cheaply). Generic on purpose: the evidence is about
-  // *credible, verifiable* signals — a certificate mill or a self-rated badge doesn't count (Abel et al. 2020).
-  const WAYS = [
-    [/python|sql|javascript|react|java\b|problem/i, "a proctored skill test such as HackerRank's skills certification", "https://www.hackerrank.com/skills-verification"],
-    [/machine learning|pytorch|tensorflow|deep learning|nlp|llm|transformers|data science|pandas/i, "a public notebook or model with an evaluation number (Kaggle, Hugging Face)", "https://www.kaggle.com/learn"],
-    [/docker|kubernetes|aws|gcp|azure|terraform|ci\/cd|devops|linux/i, "a small public repo that deploys with it, with CI passing — or the provider's own entry certification", "https://github.com/features/actions"],
-    [/.*/, "a small public project that uses it, with a README that shows a measured result", null],
-  ];
-  const wayFor = (skill) => WAYS.find(([re]) => re.test(skill));
+  // ---------------------------------------------------------------- skills to prove next (honest options only)
+  const HACKERRANK = /^(python|sql|javascript|react|java|problem solving|css|node(\.js)?|rest api|go|c#|angular)$/i;
+  function nextStep(skill) {
+    const s = lc(skill);
+    if (HACKERRANK.test(skill)) return { how: "HackerRank's free, proctored skill certification covers this (about an hour); its certificate has a public verification link. Add it below and to LinkedIn.", url: "https://www.hackerrank.com/skills-verification" };
+    if (/kubernetes|k8s|helm/.test(s)) return { how: "There's no free test an employer would trust. Either add a manifest plus a CI job that deploys one of your projects to a throwaway kind cluster, or drop it from your resume — a claim nobody can check invites hard interview questions." };
+    if (/docker|container/.test(s)) return { how: "Add a Dockerfile to one project and a CI step that builds it — anyone can see both in the repo." };
+    if (/aws|gcp|azure|cloud/.test(s)) return { how: "Deploy one project there and put the live link in its README. The providers' entry certificates are paid; a working deployment is the cheaper proof." };
+    if (/ci\/cd|github actions|\bci\b/.test(s)) return { how: "Add a GitHub Actions workflow that runs your tests on every push; the green check is the proof." };
+    if (/eval|benchmark|testing|pytest|jest/.test(s)) return { how: "Put an evaluation or test result in a README — a table or one line with the number." };
+    return { how: "Show it in a small real change to one of your projects, with one sentence about it in the README — or drop it from your resume if you can't." };
+  }
 
   // ---------------------------------------------------------------- people
   const ROLE_INBOX = /^(jobs?|careers?|hiring|recruit(ing|ment)?|talent|hr|people|apply|work)@/i;
@@ -86,6 +272,15 @@ const Outreach = (() => {
     return found;
   }
 
+  function roleOf(job) {
+    let t = String(job.title || "").replace(/https?:\/\/\S+/g, "").trim();
+    if (job.source === "hackernews" && t.includes("|")) {
+      const parts = t.split("|").map((x) => x.trim()).filter(Boolean);
+      t = parts.find((x, i) => i > 0 && /engineer|developer|scientist|analyst|designer|manager|intern|roles?|lead|architect/i.test(x)) || parts[1] || parts[0];
+    }
+    return t.replace(/\s{2,}/g, " ").slice(0, 80) || "the open role";
+  }
+
   function searches(job) {
     const co = job.company || "", school = ctx?.links?.school || "";
     const roleWords = roleOf(job).replace(/\(.*?\)|[–—-].*$/g, "").trim();
@@ -102,15 +297,6 @@ const Outreach = (() => {
     return out;
   }
 
-  function roleOf(job) {
-    let t = String(job.title || "").replace(/https?:\/\/\S+/g, "").trim();
-    if (job.source === "hackernews" && t.includes("|")) {
-      const parts = t.split("|").map((x) => x.trim()).filter(Boolean);
-      t = parts.find((x, i) => i > 0 && /engineer|developer|scientist|analyst|designer|manager|intern|roles?|lead|architect/i.test(x)) || parts[1] || parts[0];
-    }
-    return t.replace(/\s{2,}/g, " ").slice(0, 80) || "the open role";
-  }
-
   // ---------------------------------------------------------------- drafts
   const TYPES = { manager: "Hiring manager / founder", engineer: "Engineer (referral ask)", alumni: "Alum",
                   recruiter: "Recruiter (after applying)", followup: "Follow-up" };
@@ -120,7 +306,7 @@ const Outreach = (() => {
     const me = (p.name || "").split(" ")[0] || p.name || "";
     const first = (who || "").split(" ")[0] || "[name]";
     const pr = proofFor(job), best = pr.best[0];
-    const proofLine = best ? `${best.title}${best.url ? ` (${best.url})` : ""}${best.note ? ` — ${best.note}` : ""}`
+    const proofLine = best ? `${best.title}${best.url ? ` (${best.url})` : ""}${best.note ? ` — ${best.note.replace(/\.$/, "")}` : ""}`
                            : "[your most relevant project, with a link and one measured result]";
     const stack = pr.proven.slice(0, 3).map((x) => x.skill);
     const stackLine = stack.length ? ` It uses ${stack.join(", ")}, which the posting asks for.` : "";
@@ -128,7 +314,7 @@ const Outreach = (() => {
     const role = roleOf(job), co = job.company || "[company]";
     const T = {
       manager: `Subject: ${role} — ${best ? best.title : "a relevant project"}\n\nHi ${first},\n\n[One line about something specific they built or wrote.] I'm interested in the ${role} role at ${co}. The most relevant thing I've built: ${proofLine}.${stackLine}\n\nWould you be open to a 15-minute call, or would you rather I apply through the posting? Happy to walk through the code.\n\nThanks,\n${sign}`,
-      engineer: `Hi ${first} — I'm about to apply for ${role} at ${co} and saw you work there. [One line about their work.] Could I ask you two quick questions about what the team values in new engineers?\n\nFor context, I built ${proofLine}.${stackLine} If it looks like a fit after that, I'd be grateful for a referral — no pressure either way.\n\n${me}`,
+      engineer: `Hi ${first} — I'm about to apply for ${role} at ${co} and saw you work there. [One line about their work.] Could I ask you two quick questions about what the team values in new engineers?\n\nFor context, the most relevant thing I've built: ${proofLine}.${stackLine} If it looks like a fit after that, I'd be grateful for a referral — no pressure either way.\n\n${me}`,
       alumni: `Hi ${first} — fellow ${L.school || "[school]"} alum here. I'm applying for ${role} at ${co}. Would you have 10 minutes to tell me what the team looks for in new engineers?\n\nHere's what I've been building: ${proofLine}.\n\nThanks!\n${me}`,
       recruiter: `Hi ${first} — I've applied for ${role} at ${co}${job.url ? ` (${job.url})` : ""}. One thing that may help the review: ${proofLine}.${stackLine} Happy to share anything else that's useful.\n\n${sign}`,
       followup: `Hi ${first} — following up on my note about the ${role} role, in case it got buried. [If true: one new thing since — e.g. a result, a fix, a deployment.] Totally fine if now isn't a good time.\n\n${me}`,
@@ -138,10 +324,10 @@ const Outreach = (() => {
 
   const GUIDE = `<ul class="guide">
     <li><b>Read one thing they made first</b> (a post, repo, talk) and open with it. Fill in every [bracket] — never send one.</li>
-    <li><b>One link, your best proof for this job.</b> Under 120 words. No attachments.</li>
+    <li><b>One link: your best proof for this job</b> — check that page shows a result before you send it. Under 120 words. No attachments.</li>
     <li><b>Ask for something small</b> — two questions or 15 minutes, not "a job".</li>
     <li><b>Follow up once</b> after 5–7 days; stop after two follow-ups. At most two people per company per week.</li>
-    <li>Personal email or LinkedIn message — not a bulk tool. These drafts are a start; your own words carry the signal
+    <li>Send it yourself from email or LinkedIn. These drafts are a start; your own words carry the signal
       (AI-written applications lost most of their value once everyone used them: Galdin &amp; Silbert, 2025).</li>
   </ul>`;
 
@@ -150,6 +336,20 @@ const Outreach = (() => {
   const KINDS = { manager: "Manager / founder", engineer: "Engineer", alumni: "Alum", recruiter: "Recruiter", other: "Other" };
   const channelOf = (contacts) => contacts.some((c) => c.status === "referred") ? "referral"
     : contacts.some((c) => c.status && c.status !== "to_contact") ? "warm" : "cold";
+  const daysSince = (d) => d ? Math.floor((Date.now() - new Date(d + "T00:00:00").getTime()) / 864e5) : 0;
+  const followDue = (c) => c.status === "messaged" && (c.followups?.length || 0) < 2 && daysSince(c.followups?.at(-1) || c.messaged_on) >= 6;
+
+  function proofHTML(pr) {
+    if (!pr.proven.length && !pr.claimed.length && !pr.missing.length) return `<p class="faint small">This posting's skills weren't read yet.</p>`;
+    const row = (cls, label, items) => items.length ? `<div class="pf-row"><span class="pf-k ${cls}">${label}</span><div>${items}</div></div>` : "";
+    const b = pr.best[0];
+    return `${row("good", "Your projects show", pr.proven.map((x) => `<span class="chip good" title="${esc(x.proof.title)}">${esc(x.skill)}</span>`).join(""))}
+      ${row("warn", "You list it, nothing shows it", pr.claimed.map((s) => `<span class="chip warn">${esc(s)}</span>`).join(""))}
+      ${row("bad", "They ask, you lack", pr.missing.map((s) => `<span class="chip bad">${esc(s)}</span>`).join(""))}
+      ${b ? `<p class="small">Lead with <b>${esc(b.title)}</b>${b.url ? ` · <a href="${esc(b.url)}" target="_blank" rel="noopener">what they'll see ↗</a>` : ""}</p>
+        ${b.weak ? `<p class="small due">Before you send it: its README doesn't state a result yet — see Profile → What employers see.</p>` : ""}`
+        : `<p class="small faint">None of your resume's projects shows these skills.</p>`}`;
+  }
 
   async function open({ job, row }) {
     await load();
@@ -170,7 +370,6 @@ const Outreach = (() => {
             <div class="faint tiny-q">“…${esc(c.snippet)}…”</div></li>`).join("")}</ul>`
             : `<p class="faint small">The posting names no one — find people yourself:</p>`}
           <ul class="who">${searches(job).map((s) => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)} ↗</a><div class="faint small">${esc(s.why)}</div></li>`).join("")}</ul>
-          ${ctx.links.school ? "" : `<p class="faint small">Add your school in Profile → Proof &amp; reach-out to get an alumni search.</p>`}
         </section>
         <section><h3>3 · Draft</h3>
           <div class="seg seg-sm" id="o-types">${Object.entries(TYPES).map(([k, l], i) => `<button data-type="${k}" class="${i ? "" : "active"}">${l}</button>`).join("")}</div>
@@ -197,15 +396,12 @@ const Outreach = (() => {
     box.addEventListener("click", (e) => { if (e.target === box || e.target.closest("[data-close]")) close(); });
 
     let type = "manager";
-    const redraw = () => {
-      $b("#o-draft").value = draft(type, job, $b("#o-who").value.trim());
-      words();
-    };
     const words = () => {
       const n = ($b("#o-draft").value.replace(/^Subject:.*\n/, "").match(/\S+/g) || []).length;
       const left = ($b("#o-draft").value.match(/\[[^\]]+\]/g) || []).length;
       $b("#o-words").textContent = `${n} words${n > 140 ? " — try to cut" : ""}${left ? ` · ${left} [bracket]${left > 1 ? "s" : ""} to fill` : ""}`;
     };
+    const redraw = () => { $b("#o-draft").value = draft(type, job, $b("#o-who").value.trim()); words(); };
     $b("#o-types").onclick = (e) => {
       const b = e.target.closest("button[data-type]"); if (!b) return;
       type = b.dataset.type;
@@ -222,7 +418,6 @@ const Outreach = (() => {
     };
     redraw();
 
-    // Log: contacts live on the tracker row; one is created (status Saved) on the first entry.
     const rowFor = async () => {
       if (row) return row;
       row = await api("/api/applications", { json: { job_id: job.id, company: job.company, role: job.title, url: job.url,
@@ -260,12 +455,11 @@ const Outreach = (() => {
         li.querySelector(".o-del").onclick = () => save(list2.filter((x) => x.id !== id));
       });
     };
-    const addContact = (name, kind, handle) => save([...(row?.contacts || []),
-      { id: uid(), name, kind, handle, status: "to_contact", messaged_on: null, followups: [], added_on: today() }]);
     $b("#o-add").onsubmit = (e) => {
       e.preventDefault();
       const f = e.target;
-      addContact(f.name.value.trim(), f.kind.value, f.handle.value.trim());
+      save([...(row?.contacts || []), { id: uid(), name: f.name.value.trim(), kind: f.kind.value, handle: f.handle.value.trim(),
+        status: "to_contact", messaged_on: null, followups: [], added_on: today() }]);
       f.reset();
     };
     box.querySelectorAll("[data-log]").forEach((b) => (b.onclick = () => {
@@ -277,30 +471,13 @@ const Outreach = (() => {
     drawLog();
   }
 
-  const today = () => new Date().toISOString().slice(0, 10);
-  const daysSince = (d) => d ? Math.floor((Date.now() - new Date(d + "T00:00:00").getTime()) / 864e5) : 0;
-  const followDue = (c) => c.status === "messaged" && (c.followups?.length || 0) < 2
-    && daysSince(c.followups?.at(-1) || c.messaged_on) >= 6;
-
-  function proofHTML(pr) {
-    if (!pr.proven.length && !pr.claimed.length && !pr.missing.length)
-      return `<p class="faint small">This posting's skills weren't read yet.</p>`;
-    const row = (cls, label, items) => items.length ? `<div class="pf-row"><span class="pf-k ${cls}">${label}</span><div>${items}</div></div>` : "";
-    return `${row("good", "Proven", pr.proven.map((x) => `<span class="chip good" title="${esc(x.proof.title)}">${esc(x.skill)}</span>`).join(""))}
-      ${row("warn", "You claim it, no proof", pr.claimed.map((s) => `<span class="chip warn">${esc(s)}</span>`).join(""))}
-      ${row("bad", "They ask, you lack", pr.missing.map((s) => `<span class="chip bad">${esc(s)}</span>`).join(""))}
-      ${pr.best.length ? `<p class="small">Lead with <b>${esc(pr.best[0].title)}</b>${pr.best[0].url ? ` · <a href="${esc(pr.best[0].url)}" target="_blank" rel="noopener">link</a>` : ""}.</p>`
-        : `<p class="small faint">Add proofs in Profile → Proof &amp; reach-out, then they show up here and in your drafts.</p>`}
-      ${pr.claimed.length ? `<p class="faint small">Cheapest next proof: ${esc(pr.claimed[0])} — ${esc(wayFor(pr.claimed[0])[1])}.</p>` : ""}`;
-  }
-
-  // A line on the job card: proof at a glance + the button that opens the panel.
+  // A line on the job card: how many of its skills your projects show, and the button that opens the panel.
   function cardLine(job) {
-    if (!ctx) return `<div class="reach-line"><button class="btn small" data-reach="${esc(job.id)}">Reach out</button></div>`;
+    if (!ctx) return `<div class="reach-line"><span></span><button class="btn small" data-reach="${esc(job.id)}">Reach out</button></div>`;
     const pr = proofFor(job), posted = fromPosting(job).filter((c) => c.kind !== "name");
     const total = pr.proven.length + pr.claimed.length + pr.missing.length;
     return `<div class="reach-line">
-      <span class="small">${total ? `<b>${pr.proven.length}/${total}</b> skills proven` : "Proof"}${posted.length ? ` · <b>${posted.length}</b> contact${posted.length > 1 ? "s" : ""} in the posting` : ""}</span>
+      <span class="small">${total ? `Your projects show <b>${pr.proven.length}/${total}</b> of its skills` : ""}${posted.length ? `${total ? " · " : ""}<b>${posted.length}</b> contact${posted.length > 1 ? "s" : ""} in the posting` : ""}</span>
       <button class="btn small" data-reach="${esc(job.id)}">Reach out</button></div>`;
   }
 
@@ -323,18 +500,15 @@ const Outreach = (() => {
       follow += (c.followups || []).filter(inWeek).length;
       if (["replied", "referred"].includes(c.status)) replies++;
     }
-    const due = rows.flatMap((r) => (r.contacts || []).filter(followDue).map((c) => ({ c, r })));
-    return { applied, reached, follow, replies, due };
+    return { applied, reached, follow, replies, due: rows.flatMap((r) => (r.contacts || []).filter(followDue).map((c) => ({ c, r }))) };
   }
 
-  // The chance of hearing nothing back from n applications if each has probability p of a callback. 4.7% is the
-  // average callback rate for applicants with little experience in Kroft, Lange & Notowidigdo (2013).
-  const P_CALLBACK = 0.047;
+  // The chance of hearing nothing back from n applications at the average callback rate for applicants with
+  // little experience in Kroft, Lange & Notowidigdo (2013): 4.7%.
   function odds(rows) {
     const sent = rows.filter((r) => r.status && r.status !== "Saved" && r.status !== "Withdrawn").length;
     const heard = rows.filter((r) => ["Assessment", "Interviewing", "Offer"].includes(r.status)).length;
-    const none = Math.pow(1 - P_CALLBACK, sent);
-    return { sent, heard, none };
+    return { sent, heard, none: Math.pow(1 - 0.047, sent) };
   }
 
   async function weekPanel(el, rows) {
@@ -359,7 +533,7 @@ const Outreach = (() => {
       <form class="wk-form" id="wk-form" hidden>
         <label>Applications <input class="input" type="number" min="0" max="100" name="apply" value="${plan?.apply ?? 8}"></label>
         <label>People to message <input class="input" type="number" min="0" max="50" name="reach" value="${plan?.reach ?? 5}"></label>
-        <label class="grow">Focus <input class="input" name="focus" value="${esc(plan?.focus || "")}" placeholder="e.g. AI startups in Bengaluru; get the HackerRank Python cert"></label>
+        <label class="grow">Focus <input class="input" name="focus" value="${esc(plan?.focus || "")}" placeholder="e.g. AI startups in Bengaluru; add a Results section to my best repo"></label>
         <button class="btn primary">Save plan</button></form>
     </section>`;
     el.querySelector("#wk-edit").onclick = () => { const f = el.querySelector("#wk-form"); f.hidden = !f.hidden; };
@@ -373,67 +547,98 @@ const Outreach = (() => {
     };
   }
 
-  // ---------------------------------------------------------------- Profile: proofs + reach-out details
-  const PROOF_KINDS = { project: "Project with a measured result", benchmark: "Benchmark / evaluation", demo: "Live demo",
-    certificate: "Certificate (reputable issuer)", assessment: "Proctored skill test", oss: "Merged open-source contribution" };
+  // ---------------------------------------------------------------- Profile: what employers see
+  const mark = (ok) => ok === true ? `<span class="ck ok" aria-label="done">✓</span>`
+    : ok === "warn" ? `<span class="ck warn" aria-label="partly">!</span>` : `<span class="ck bad" aria-label="missing">✗</span>`;
 
-  async function proofSection(el) {
+  async function proofSection(el, force = false) {
     await load(true);
-    const p = ctx.profile, proofs = [...ctx.proofs];
+    const shell = (inner) => (el.innerHTML = `<section class="card-box proofs"><h3 class="section-title">What employers see</h3>${inner}</section>`);
+    if (!ctx.projects.length) return shell(`<p class="faint small">${ctx.hasTex ? "No linked projects were found in your resume." : "Upload your resume as LaTeX (.tex) so its project links can be checked."}</p>`);
+    shell(`<p class="faint small">Checking your projects on GitHub…</p>`);
+    let au;
+    try { au = await audit(force); } catch (e) { return shell(`<p class="small bad-t">${esc(e.message)}</p>`); }
+    const rows = ctx.projects.map((p) => { const cs = checksFor(p, au.projects[p.name], au); return { p, a: au.projects[p.name], cs, score: scoreOf(cs) }; })
+      .sort((a, b) => b.score - a.score);
     const jobs = await api("/api/jobs?status=new,later").catch(() => []);
-    // Skills your board's jobs ask for most that no proof covers yet — what to prove next.
     const asked = {};
     for (const j of jobs) for (const sk of new Set([...(j.card?.skills_matched || []), ...(j.card?.skills_gap || [])])) asked[sk] = (asked[sk] || 0) + 1;
-    const unproven = Object.entries(asked).filter(([s]) => !proofs.some((x) => covers(x, s))).sort((a, b) => b[1] - a[1]).slice(0, 6);
-    const projects = Object.keys(p.projects || {}).filter((n) => !proofs.some((x) => lc(x.title) === lc(n)));
+    const all = proofs();
+    const claimed = new Set((ctx.profile.keywords || []).filter((k) => k.keep).map((k) => lc(k.name)));
+    const top = Object.entries(asked).sort((a, b) => b[1] - a[1]).slice(0, 10)
+      .map(([s, n]) => ({ s, n, by: all.find((x) => mentions(x.text, s)), claimed: claimed.has(lc(s)) }));
+    const shown = top.filter((t) => t.by), unshown = top.filter((t) => !t.by);
+    const linkedinText = (p, a) => [p.name + (p.desc ? ` — ${p.desc}` : ""), p.bullets.find(hasResult) || p.bullets[0] || "",
+      p.stack ? `Skills: ${p.stack.replace(/ · /g, ", ")}` : "", a?.repo?.html || a?.live || p.urls[0] || ""].filter(Boolean).join("\n");
+    const profileChecks = [
+      { ok: au.resumeLink.ok, label: "The GitHub link in your resume header works",
+        fix: au.resumeLink.ok ? "" : `${au.resumeLink.url} is a dead page${au.login ? ` — your account is github.com/${au.login} now. Update the header link and every project link.` : "."}` },
+      { ok: !!au.bio, label: "Your GitHub bio says what you do and that you're looking", fix: "Profile → Edit profile → Bio." },
+      ...(au.pinned ? [{ ok: rows.slice(0, 3).every((r) => !r.a?.repo || au.pinned.some((n) => lc(n) === lc(r.a.repo.full.split("/")[1]))),
+        label: "Your strongest projects are pinned", fix: `Pinned now: ${au.pinned.join(", ") || "none"}. Pin your best three or four: profile → Customize your pins.` }] : []),
+    ];
     el.innerHTML = `<section class="card-box proofs">
-      <h3 class="section-title">Proof &amp; reach-out</h3>
-      <p class="faint small">Employers trust what they can check. Add things a stranger can verify — a repo with a measured result, a live
-        demo, a proctored test, a reputable certificate — and tag the skills each one shows. They appear on job cards and in your drafts.
-        Certificates also help when posted on LinkedIn (Athey &amp; Palikot, 2024).</p>
-      <div class="pf-list">${proofs.map((x, i) => `<div class="pf-item" data-i="${i}">
-          <div class="grow"><b>${esc(x.title)}</b> <span class="faint small">${esc(PROOF_KINDS[x.kind] || "")}</span>
-            ${x.url ? `<a class="small" href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.url.replace(/^https?:\/\//, "").slice(0, 48))}</a>` : `<span class="small bad-t">add a link — unverifiable proof doesn't count</span>`}
-            ${x.note ? `<div class="small muted">${esc(x.note)}</div>` : ""}
-            <div class="chips">${(x.skills || []).map((s) => `<span class="chip">${esc(s)}</span>`).join("")}</div></div>
-          <label class="small"><input type="checkbox" class="pf-li" ${x.on_linkedin ? "checked" : ""}> on LinkedIn</label>
-          <button class="icon-btn pf-del" aria-label="Remove">✕</button></div>`).join("") || `<p class="faint small">No proofs yet.</p>`}</div>
-      <form class="pf-form" id="pf-form" autocomplete="off">
-        <input class="input" name="title" placeholder="What it is, e.g. Job-board decision model" required list="pf-projects">
-        <datalist id="pf-projects">${projects.map((n) => `<option value="${esc(n)}">`).join("")}</datalist>
-        <input class="input" name="url" placeholder="Link anyone can open" type="url">
-        <select class="input" name="kind">${Object.entries(PROOF_KINDS).map(([k, l]) => `<option value="${k}">${l}</option>`).join("")}</select>
-        <input class="input" name="skills" placeholder="Skills it shows, comma-separated">
-        <input class="input" name="note" placeholder="The result in one line, e.g. 96% on a 76-job benchmark, 0.15 s/job">
-        <button class="btn">Add proof</button></form>
-      ${unproven.length ? `<h4>Most-asked skills you can't prove yet</h4><ul class="next-proof">${unproven.map(([s, n]) => {
-        const w = wayFor(s); return `<li><b>${esc(s)}</b> <span class="faint small">asked by ${n} job${n > 1 ? "s" : ""} on your board</span>
-          <div class="small">${esc(w[1])}${w[2] ? ` · <a href="${w[2]}" target="_blank" rel="noopener">start</a>` : ""}</div></li>`; }).join("")}</ul>` : ""}
+      <div class="wk-head"><h3 class="section-title" style="margin:0">What employers see</h3><button class="btn tiny" id="pf-recheck">Check again</button></div>
+      <p class="faint small">A reviewer opens the links in your resume and decides in a minute whether the claims are real.
+        This checks what they'll find and gives you the fix — proof only counts where they can see it.</p>
+      <ul class="checks">${profileChecks.map((c) => `<li>${mark(c.ok)}<span>${esc(c.label)}${c.ok !== true && c.fix ? `<div class="small muted">${esc(c.fix)}</div>` : ""}</span></li>`).join("")}</ul>
+      ${rows.map(({ p, a, cs }) => `<details class="pj" ${cs.some((c) => c.ok === false) ? "open" : ""}>
+          <summary><b>${esc(p.name)}</b> <span class="faint small">${cs.filter((c) => c.ok === true).length}/${cs.length} checks</span>
+            ${a?.repo?.html ? `<a class="small" href="${esc(a.repo.html)}" target="_blank" rel="noopener">open ↗</a>` : ""}</summary>
+          <ul class="checks">${cs.map((c) => `<li>${mark(c.ok)}<span>${esc(c.label)}${c.ok !== true && c.fix ? `<div class="small muted">${esc(c.fix)}</div>` : ""}
+            ${c.ok !== true && c.copy ? `<pre class="paste">${esc(c.copy)}</pre>${copyBtn(c.copy)}` : ""}</span></li>`).join("")}</ul>
+          <div class="li-kit"><div class="small"><b>For LinkedIn → Add section → Projects</b></div>
+            <pre class="paste">${esc(linkedinText(p, a))}</pre>${copyBtn(linkedinText(p, a))}
+            <label class="small"><input type="checkbox" class="pf-li" data-p="${esc(p.name)}" ${ctx.state[p.name]?.linkedin ? "checked" : ""}> It's on my LinkedIn</label></div>
+        </details>`).join("")}
+      ${au.repos.length ? `<h4>On your GitHub, not on your resume</h4><ul class="checks">${au.repos.slice(0, 5).map((r) => `<li>${mark("warn")}<span>
+          <a href="${esc(r.html)}" target="_blank" rel="noopener">${esc(r.name)}</a>${r.description ? ` — ${esc(r.description)}` : ""}
+          <div class="small muted">If it's stronger than what's on your resume, add it with one measured result.</div></span></li>`).join("")}</ul>` : ""}
+      ${top.length ? `<h4>What your board's jobs ask for</h4>
+        ${shown.length ? `<p class="small">Your projects already show: ${shown.map((t) => `<span class="chip good" title="shown by ${esc(t.by.title)}">${esc(t.s)} · ${t.n}</span>`).join(" ")}</p>` : ""}
+        <ul class="next-proof">${unshown.map((t) => { const w = nextStep(t.s); return `<li><b>${esc(t.s)}</b>
+          <span class="faint small">asked by ${t.n} job${t.n > 1 ? "s" : ""} · ${t.claimed ? "on your resume, but nothing shows it" : "not on your resume"}</span>
+          <div class="small">${esc(w.how)}${w.url ? ` <a href="${w.url}" target="_blank" rel="noopener">HackerRank certifications ↗</a>` : ""}</div></li>`; }).join("")}</ul>` : ""}
+      <details class="extra"><summary class="small">Add a certificate or test result (not on your resume)</summary>
+        <div class="pf-list">${ctx.extras.map((x, i) => `<div class="pf-item"><div class="grow"><b>${esc(x.title)}</b>
+          ${x.url ? `<a class="small" href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.url.replace(/^https?:\/\//, "").slice(0, 48))}</a>` : ""}
+          <div class="chips">${(x.skills || []).map((s) => `<span class="chip">${esc(s)}</span>`).join("")}</div></div>
+          <button class="icon-btn pf-del" data-i="${i}" aria-label="Remove">✕</button></div>`).join("")}</div>
+        <form class="pf-form" id="pf-form" autocomplete="off">
+          <input class="input" name="title" placeholder="e.g. HackerRank Python (Basic) certificate" required>
+          <input class="input" name="url" placeholder="Verification link" type="url" required>
+          <input class="input" name="skills" placeholder="Skills it shows, comma-separated">
+          <button class="btn">Add</button></form></details>
       <h4>For drafts and alumni search</h4>
       <div class="pf-links">
-        <label>GitHub <input class="input" id="pf-github" value="${esc(p.github || ctx.links.github)}" placeholder="https://github.com/you"></label>
-        <label>LinkedIn <input class="input" id="pf-linkedin" value="${esc(p.linkedin || ctx.links.linkedin)}" placeholder="https://www.linkedin.com/in/you"></label>
-        <label>School / college <input class="input" id="pf-school" value="${esc(p.school || ctx.links.school)}" placeholder="University of Delhi"></label>
+        <label>GitHub <input class="input" id="pf-github" value="${esc(ctx.links.github)}" placeholder="https://github.com/you"></label>
+        <label>LinkedIn <input class="input" id="pf-linkedin" value="${esc(ctx.links.linkedin)}" placeholder="https://www.linkedin.com/in/you"></label>
+        <label>School / college <input class="input" id="pf-school" value="${esc(ctx.links.school)}" placeholder="University of Delhi"></label>
       </div>
     </section>`;
-    const saveProofs = async (list) => { await api("/api/profile", { method: "PATCH", json: { proofs: list } }); await proofSection(el); };
+    el.querySelectorAll("[data-copy]").forEach((b) => (b.onclick = async () => { await navigator.clipboard.writeText(b.dataset.copy).catch(() => {}); toast("Copied"); }));
+    el.querySelector("#pf-recheck").onclick = () => proofSection(el, true);
+    el.querySelectorAll(".pf-li").forEach((cb) => (cb.onchange = async () => {
+      const state = { ...ctx.state, [cb.dataset.p]: { ...(ctx.state[cb.dataset.p] || {}), linkedin: cb.checked } };
+      await api("/api/profile", { method: "PATCH", json: { proof_state: state } });
+      ctx.state = state;
+      toast(cb.checked ? "Marked as on LinkedIn" : "Unmarked");
+    }));
+    const saveExtras = async (list) => { await api("/api/profile", { method: "PATCH", json: { proofs: list } }); await proofSection(el); };
     el.querySelector("#pf-form").onsubmit = (e) => {
       e.preventDefault();
       const f = e.target;
-      saveProofs([...proofs, { id: uid(), title: f.title.value.trim(), url: f.url.value.trim(), kind: f.kind.value,
-        skills: f.skills.value.split(",").map((s) => s.trim()).filter(Boolean), note: f.note.value.trim(), on_linkedin: false, added: today() }]);
+      saveExtras([...ctx.extras, { id: uid(), title: f.title.value.trim(), url: f.url.value.trim(), kind: "certificate",
+        skills: f.skills.value.split(",").map((s) => s.trim()).filter(Boolean), added: today() }]);
     };
-    el.querySelectorAll(".pf-item").forEach((it) => {
-      const i = +it.dataset.i;
-      it.querySelector(".pf-del").onclick = () => saveProofs(proofs.filter((_, j) => j !== i));
-      it.querySelector(".pf-li").onchange = (e) => saveProofs(proofs.map((x, j) => j === i ? { ...x, on_linkedin: e.target.checked } : x));
-    });
+    el.querySelectorAll(".pf-del").forEach((b) => (b.onclick = () => saveExtras(ctx.extras.filter((_, j) => j !== +b.dataset.i))));
     for (const k of ["github", "linkedin", "school"]) el.querySelector(`#pf-${k}`).onchange = async (e) => {
       await api("/api/profile", { method: "PATCH", json: { [k]: e.target.value.trim() } });
-      await load(true);
+      try { localStorage.removeItem(AUDIT_KEY); } catch (_) { /* storage off */ }
+      await proofSection(el, true);
       toast("Saved");
     };
   }
 
-  return { load, open, cardLine, proofFor, fromPosting, draft, weekPanel, proofSection, odds, channelOf, isoWeek };
+  return { load, audit, open, cardLine, proofFor, fromPosting, draft, weekPanel, proofSection, odds, channelOf, isoWeek, projectsFromTex };
 })();

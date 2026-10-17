@@ -9,6 +9,7 @@ from contextlib import nullcontext
 from pathlib import Path
 from typing import Optional
 
+import requests
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
@@ -325,7 +326,7 @@ async def patch_profile(request: Request):
     if not p:
         raise HTTPException(400, "Build a profile first")
     patch = await request.json()
-    for k in ("keywords", "search_terms", "fields", "projects", "proofs"):
+    for k in ("keywords", "search_terms", "fields", "projects", "proofs", "proof_state"):
         if k in patch:
             p[k] = patch[k]
     ov = dict(p.get("overrides") or {})
@@ -500,6 +501,40 @@ def list_jobs(status: str = "new", limit: int = 200):
     return [{**r["data"], "status": r["status"], "match": r["match"], "card": r["card"],
              "reason": r["reason"], "description": (r["data"].get("description") or "")[:30000]}
             for r in rows]
+
+
+_GH_READ = re.compile(r"^/(users|repos)/[\w.-]+(/[\w.\-/]*)?(\?[\w=&.%-]*)?$")
+
+
+@app.get("/api/proof/gh")
+def gh_read(path: str):
+    """Read-only GitHub API calls for the proof check, with the sync token (5,000/hour instead of 60 anonymous)."""
+    token = (db.get("github") or {}).get("token")
+    if not token:
+        raise HTTPException(412, "No GitHub token")
+    if not _GH_READ.match(path):
+        raise HTTPException(400, "Only /users/… and /repos/… reads are allowed")
+    r = requests.get(f"https://api.github.com{path}", timeout=20,
+                     headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"})
+    if r.status_code == 404:
+        raise HTTPException(404, "Not found")
+    if r.status_code in (403, 429):
+        raise HTTPException(429, "GitHub rate limit — try again later")
+    r.raise_for_status()
+    return r.json()
+
+
+@app.get("/api/proof/pinned")
+def pinned_repos(login: str):
+    """The repos pinned on a GitHub profile (needs a token: the GraphQL API has no anonymous access)."""
+    token = (db.get("github") or {}).get("token")
+    if not token:
+        raise HTTPException(404, "No GitHub token")
+    q = '{ user(login: "%s") { pinnedItems(first: 6) { nodes { ... on Repository { name owner { login } } } } } }' % login.replace('"', "")
+    r = requests.post("https://api.github.com/graphql", json={"query": q}, timeout=20,
+                      headers={"Authorization": f"Bearer {token}"})
+    nodes = (((r.json().get("data") or {}).get("user") or {}).get("pinnedItems") or {}).get("nodes") or []
+    return [n["name"] for n in nodes if n]
 
 
 @app.get("/api/jobs/{job_id}")
