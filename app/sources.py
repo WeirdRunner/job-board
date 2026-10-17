@@ -20,28 +20,45 @@ from typing import Callable, Dict, List, Optional
 import requests
 from bs4 import BeautifulSoup
 
-UA = {"User-Agent": "JobBoard/1.0 (personal, self-hosted job board; +https://github.com/deveshpat/job-board)"}
+UA = {"User-Agent": "JobBoard/1.0 (personal, self-hosted job board; +https://github.com/WeirdRunner/job-board)"}
 # Where each source's jobs come from — cards link "via <source>" here (attribution the sources ask for).
 SOURCE_HOME = {"remotive": "https://remotive.com", "himalayas": "https://himalayas.app", "jobicy": "https://jobicy.com",
                "weworkremotely": "https://weworkremotely.com", "arbeitnow": "https://www.arbeitnow.com",
                "hackernews": "https://news.ycombinator.com", "greenhouse": "https://www.greenhouse.com",
-               "ashby": "https://www.ashbyhq.com", "lever": "https://www.lever.co"}
-# We Work Remotely's API terms are stricter than its RSS page, so it's opt-in for new boards.
-OPT_IN_SOURCES = {"weworkremotely"}
+               "ashby": "https://www.ashbyhq.com", "lever": "https://www.lever.co",
+               "remoteok": "https://remoteok.com", "workingnomads": "https://www.workingnomads.com",
+               "themuse": "https://www.themuse.com", "smartrecruiters": "https://www.smartrecruiters.com",
+               "freelancer": "https://www.freelancer.com"}
+# We Work Remotely's API terms are stricter than its RSS page, so it's opt-in for new boards. Freelancer.com's API
+# terms ask that stored data be refreshed within 24 hours and kept encrypted, so it's opt-in too (and expires daily).
+OPT_IN_SOURCES = {"weworkremotely", "freelancer"}
+# Sources whose postings are freelance gigs rather than jobs (other postings become gigs when they say "freelance").
+GIG_SOURCES = {"freelancer"}
+FREELANCE = re.compile(r"\bfreelance|\bcontractor\b|\bgig\b|per project|project[- ]based", re.I)
+# Freelancer.com's text search barely filters, so keep only projects tagged with technical skills.
+TECH_TAG = re.compile(r"python|machine learning|\bai\b|artificial intelligence|deep learning|\bllm|nlp|computer vision|"
+                      r"data (science|engineering|analysis|processing)|software|web (development|scraping)|\bapi\b|"
+                      r"backend|frontend|full stack|react|node|javascript|typescript|django|fastapi|flask|sql|"
+                      r"automation|chatbot|devops|docker|cloud", re.I)
 TIMEOUT = 25
 
 DEFAULT_COMPANIES = {
     "greenhouse": ["razorpaysoftwareprivatelimited", "groww", "hackerrank", "druva", "gitlab",
                    "mongodb", "databricks", "stripe", "coinbase", "elastic", "cloudflare",
-                   "scaleai", "anthropic"],
+                   "scaleai", "anthropic",
+                   # hire in India (checked 2026-09-25)
+                   "okta", "zscaler", "twilio", "toast", "samsara", "airbnb", "datadog", "mixpanel"],
     "ashby": ["sarvam", "openai", "deepgram", "supabase", "cursor", "replit", "ramp", "langchain",
-              "elevenlabs", "posthog", "atlan", "composio", "perplexity", "notion", "cohere", "modal"],
+              "elevenlabs", "posthog", "atlan", "composio", "perplexity", "notion", "cohere", "modal",
+              "harvey", "anyscale"],
     "lever": ["paytm", "cred", "zeta", "palantir"],
+    # SmartRecruiters company ids (Freshworks and Swiggy are Indian; checked 2026-09-25)
+    "smartrecruiters": ["Freshworks", "Swiggy", "ServiceNow", "Canva", "Experian", "NielsenIQ"],
 }
 
 
 # Ashby/Lever only give the board slug; show the real names for the defaults.
-COMPANY_NAMES = {"openai": "OpenAI", "elevenlabs": "ElevenLabs", "posthog": "PostHog", "langchain": "LangChain",
+COMPANY_NAMES = {"openai": "OpenAI", "anyscale": "Anyscale", "harvey": "Harvey", "elevenlabs": "ElevenLabs", "posthog": "PostHog", "langchain": "LangChain",
                  "cred": "CRED", "paytm": "Paytm", "sarvam": "Sarvam AI", "supabase": "Supabase"}
 
 
@@ -98,7 +115,7 @@ def _iso(v) -> Optional[str]:
 def _job(source: str, source_id, **kw) -> dict:
     j = {"source": source, "title": "", "company": "", "location": "", "remote": None, "url": "",
          "description": "", "salary": "", "posted_at": None, "tags": [], "employment_type": "",
-         "location_restrictions": "", "logo": ""}
+         "location_restrictions": "", "logo": "", "kind": "job", "bids": None}
     j.update({k: v for k, v in kw.items() if v is not None})
     j["id"] = hashlib.sha1(f"{source}:{source_id}".encode()).hexdigest()[:16]
     j["title"] = re.sub(r"\s+", " ", j["title"]).strip()
@@ -314,10 +331,120 @@ def lever(s, terms, companies, log):
     return _per_company(one, companies.get("lever", []), log)
 
 
+def _demangle(t: str) -> str:
+    """Undo UTF-8 text that was decoded as Latin-1 upstream ("MecÃ¡nico" -> "Mecánico"); leave anything else alone."""
+    if not re.search("[ÃÂ][\u0080-\u00bf]", t):
+        return t
+    try:
+        return t.encode("latin-1").decode("utf-8")
+    except (UnicodeEncodeError, UnicodeDecodeError):
+        return t
+
+
+def remoteok(s, terms, companies, log):
+    """Remote OK's public API. Its terms: link back to Remote OK and credit it (cards say "via Remote OK")."""
+    out = []
+    for j in _get(s, "https://remoteok.com/api").json()[1:]:          # [0] is the legal notice
+        j = {k: _demangle(v) if isinstance(v, str) else v for k, v in j.items()}
+        sal = f"USD {j['salary_min']:,}–{j['salary_max']:,} / year" if j.get("salary_min") and j.get("salary_max") else ""
+        out.append(_job("remoteok", j["id"], title=j.get("position", ""), company=j.get("company", ""),
+                        location=j.get("location") or "Remote", remote=True, url=j.get("url") or j.get("apply_url", ""),
+                        description=html_to_text(j.get("description")), salary=sal, posted_at=_iso(j.get("date")),
+                        tags=j.get("tags") or [], logo=j.get("company_logo") or j.get("logo") or "",
+                        location_restrictions=j.get("location") or ""))
+    return out
+
+
+def workingnomads(s, terms, companies, log):
+    out = []
+    for j in _get(s, "https://www.workingnomads.com/api/exposed_jobs/").json():
+        tags = [t.strip() for t in (j.get("tags") or "").split(",") if t.strip()] if isinstance(j.get("tags"), str) else (j.get("tags") or [])
+        out.append(_job("workingnomads", j["url"], title=j.get("title", ""), company=j.get("company_name", ""),
+                        location=j.get("location") or "Remote", remote=True, url=j["url"],
+                        description=html_to_text(j.get("description")), posted_at=_iso(j.get("pub_date")),
+                        tags=[j.get("category_name")] + tags if j.get("category_name") else tags,
+                        location_restrictions=j.get("location") or ""))
+    return out
+
+
+MUSE_CATEGORIES = ["Software Engineering", "Data and Analytics", "Data Science", "Computer and IT"]
+
+
+def themuse(s, terms, companies, log, pages=3):
+    """The Muse's public API (no key needed at this volume). Its terms: link back to The Muse."""
+    out = []
+    for cat in MUSE_CATEGORIES:
+        for page in range(pages):
+            d = _get(s, "https://www.themuse.com/api/public/jobs", page=page, category=cat, descending="true").json()
+            for j in d.get("results", []):
+                locs = [x["name"] for x in j.get("locations") or []]
+                levels = [x["name"] for x in j.get("levels") or []]
+                out.append(_job("themuse", j["id"], title=j.get("name", ""), company=(j.get("company") or {}).get("name", ""),
+                                location=" / ".join(locs), remote=any("remote" in l.lower() for l in locs),
+                                url=(j.get("refs") or {}).get("landing_page", ""), description=html_to_text(j.get("contents")),
+                                posted_at=_iso(j.get("publication_date")),
+                                tags=[x["name"] for x in j.get("categories") or []] + levels))
+            if page + 1 >= d.get("page_count", 0):
+                break
+    return out
+
+
+def smartrecruiters(s, terms, companies, log, per_company=25):
+    """Companies' public SmartRecruiters postings. The list has no text, so the newest few get a detail call each."""
+    def one(co):
+        listing = _get(s, f"https://api.smartrecruiters.com/v1/companies/{co}/postings", limit=100).json().get("content", [])
+        listing.sort(key=lambda j: j.get("releasedDate") or "", reverse=True)
+        res = []
+        for j in listing[:per_company]:
+            d = _get(s, f"https://api.smartrecruiters.com/v1/companies/{co}/postings/{j['id']}").json()
+            sec = (d.get("jobAd") or {}).get("sections") or {}
+            text = "\n\n".join(html_to_text((sec.get(k) or {}).get("text")) for k in
+                                ("jobDescription", "qualifications", "additionalInformation", "companyDescription"))
+            loc = j.get("location") or {}
+            where = ", ".join(x for x in (loc.get("city"), loc.get("region"), loc.get("country", "").upper()) if x)
+            res.append(_job("smartrecruiters", j["id"], title=j.get("name", ""), company=(j.get("company") or {}).get("name") or co,
+                            location=("Remote · " if loc.get("remote") else "") + where, remote=bool(loc.get("remote")),
+                            url=d.get("postingUrl") or f"https://jobs.smartrecruiters.com/{co}/{j['id']}",
+                            description=text.strip(), posted_at=_iso(j.get("releasedDate")),
+                            employment_type=(j.get("typeOfEmployment") or {}).get("label", ""),
+                            tags=[x for x in ((j.get("function") or {}).get("label"), (j.get("experienceLevel") or {}).get("label")) if x]))
+        return res
+    return _per_company(one, companies.get("smartrecruiters", []), log)
+
+
+# ---------------------------------------------------------------------------
+# Freelance gigs (HN's "Freelancer? Seeking freelancer?" thread was checked too: Jul-Oct 2026 it held only
+# SEEKING WORK posts, no work on offer, so it isn't a source)
+# ---------------------------------------------------------------------------
+
+def freelancer(s, terms, companies, log, per_term=25):
+    """Freelancer.com's public project API (its API terms: refresh within 24 h, store encrypted — see OPT_IN_SOURCES)."""
+    out, seen = [], set()
+    for t in (terms or ["python"])[:6]:
+        d = _get(s, "https://www.freelancer.com/api/projects/0.1/projects/active/", query=t, limit=per_term,
+                 full_description="true", job_details="true", compact="true", **{"languages[]": "en"}).json()
+        for p in (d.get("result") or {}).get("projects") or []:
+            tags = [j.get("name") for j in p.get("jobs") or [] if j.get("name")]
+            if p["id"] in seen or not any(TECH_TAG.search(t) for t in tags):
+                continue
+            seen.add(p["id"])
+            b, cur = p.get("budget") or {}, (p.get("currency") or {}).get("code", "")
+            hourly = p.get("type") == "hourly"
+            lo, hi = b.get("minimum"), b.get("maximum")
+            budget = (f"{cur} {lo:,.0f}" + (f"–{hi:,.0f}" if hi else "+") + (" / hour" if hourly else " fixed")) if lo else ""
+            out.append(_job("freelancer", p["id"], title=p.get("title", ""), company="Freelancer.com client",
+                            location="Remote", remote=True, url=f"https://www.freelancer.com/projects/{p.get('seo_url', p['id'])}",
+                            description=p.get("description") or "", salary=budget, posted_at=_iso(p.get("time_submitted")),
+                            tags=tags, employment_type="hourly freelance" if hourly else "fixed-price freelance", kind="gig",
+                            bids=(p.get("bid_stats") or {}).get("bid_count")))
+    return out
+
+
 SOURCES: Dict[str, Callable] = {
     "remotive": remotive, "himalayas": himalayas, "jobicy": jobicy, "weworkremotely": weworkremotely,
     "arbeitnow": arbeitnow, "hackernews": hackernews, "greenhouse": greenhouse, "ashby": ashby,
-    "lever": lever,
+    "lever": lever, "remoteok": remoteok, "workingnomads": workingnomads, "themuse": themuse,
+    "smartrecruiters": smartrecruiters, "freelancer": freelancer,
 }
 
 
@@ -338,6 +465,9 @@ def fetch_all(enabled: List[str], terms: List[str], companies: Dict[str, List[st
             else:
                 log(f"✓ {name}: {len(res)} postings")
                 jobs.extend(res)
+    for j in jobs:      # a freelance posting on a job board is a gig too
+        if j.get("kind") != "gig" and FREELANCE.search(f"{j.get('employment_type', '')} {j.get('title', '')}"):
+            j["kind"] = "gig"
     # Dedupe the same posting seen through several sources/terms.
     seen, unique = set(), []
     for j in jobs:

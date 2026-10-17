@@ -436,6 +436,7 @@ def test_publish_and_two_device_sync(tmp_path, fake_github):
 
     # Edits flow both ways; an unchanged sync makes no commit.
     a2 = mac2.applications()[0]
+    time.sleep(1.1)       # timestamps have 1 s resolution; an edit in the same second as the row's creation ties
     mac2.update_application(a2["id"], {"status": "Interviewing"})
     assert s2.sync_once()["pushed"] is True
     s1.sync_once()
@@ -737,3 +738,86 @@ def test_new_board_run_is_quiet(tmp_path, monkeypatch):
     monkeypatch.setenv("JOBBOARD_DATA_KEY", vault.b64(key))
     monkeypatch.delenv("TYPESAFE_API_KEY", raising=False)
     assert ci.main(["--state", str(st), "--force"]) == 4
+
+
+def test_new_sources_switch_on_once_for_existing_boards(tmp_path):
+    from app.db import DB
+    from app.pipeline import LEGACY_SOURCES, Pipeline
+    from app.sources import OPT_IN_SOURCES, SOURCES
+    db = DB(tmp_path / "t.db")
+    p = Pipeline.__new__(Pipeline)
+    p.db = db
+    old = [x for x in LEGACY_SOURCES if x not in OPT_IN_SOURCES and x != "jobicy"]      # a board that had turned jobicy off
+    db.put("settings", {"sources": old, "companies": {"greenhouse": ["mycompany"]}})
+    s = p.settings()
+    assert "remoteok" in s["sources"] and "smartrecruiters" in s["sources"]
+    assert "jobicy" not in s["sources"] and "weworkremotely" not in s["sources"]         # your choices and opt-ins kept
+    assert "mycompany" in s["companies"]["greenhouse"] and "okta" in s["companies"]["greenhouse"]
+    assert s["companies"]["smartrecruiters"]
+    s["sources"].remove("remoteok")                                                       # you switch one off...
+    db.put("settings", s)
+    assert "remoteok" not in p.settings()["sources"]                                     # ...and it stays off
+    assert set(p.settings()["sources_seen"]) == set(SOURCES)
+
+
+def test_demangle_repairs_double_encoded_text_only():
+    from app.sources import _demangle
+    assert _demangle("MecÃ¡nico") == "Mecánico"
+    assert _demangle("Café") == "Café" and _demangle("plain") == "plain"
+
+
+def test_freelance_postings_become_gigs(monkeypatch):
+    from app import sources as S
+    rows = [S._job("arbeitnow", 1, title="Freelance Python Developer", company="A", employment_type=""),
+            S._job("arbeitnow", 2, title="Backend Engineer", company="B", employment_type="Contractor"),
+            S._job("arbeitnow", 3, title="Backend Engineer", company="C", employment_type="Full Time")]
+    monkeypatch.setitem(S.SOURCES, "arbeitnow", lambda *a, **k: rows)
+    out = {j["company"]: j["kind"] for j in S.fetch_all(["arbeitnow"], [], {}, lambda m: None)}
+    assert out == {"A": "gig", "B": "gig", "C": "job"}
+    assert "freelancer" in S.OPT_IN_SOURCES and "freelancer" in S.GIG_SOURCES
+
+
+def test_freelancer_gigs_expire_after_a_day_but_applied_ones_stay(tmp_path):
+    from app.db import DB
+    db = DB(tmp_path / "t.db")
+    old = "2020-01-01T00:00:00"
+    for i, st in enumerate(["new", "applied", "raw"]):
+        db.conn.execute("INSERT INTO jobs (id, source, title, company, location, url, posted_at, data, status, created_at,"
+                        " updated_at) VALUES (?, 'freelancer', 't', 'c', '', '', NULL, '{}', ?, ?, ?)", (f"f{i}", st, old, old))
+    db.conn.execute("INSERT INTO jobs (id, source, title, company, location, url, posted_at, data, status, created_at,"
+                    " updated_at) VALUES ('g', 'greenhouse', 't', 'c', '', '', NULL, '{}', 'new', ?, ?)", (old, old))
+    db.conn.commit()
+    assert db.drop_stale("freelancer", hours=24) == 2
+    assert {r[0] for r in db.conn.execute("SELECT id FROM jobs")} == {"f1", "g"}
+
+
+def test_tracker_rows_record_job_or_gig(tmp_path):
+    from app.db import DB
+    db = DB(tmp_path / "t.db")
+    assert db.add_application({"company": "X", "role": "R"})["kind"] == "job"
+    assert db.add_application({"company": "Y", "role": "R", "kind": "gig"})["kind"] == "gig"
+
+
+def test_tracker_contacts_round_trip_db_csv_and_sync(tmp_path):
+    import csv, io
+    from app.db import DB
+    from app import state
+    db = DB(tmp_path / "t.db")
+    people = [{"id": "a1", "name": "Asha Rao", "kind": "engineer", "status": "messaged", "messaged_on": "2026-10-17", "followups": []}]
+    row = db.add_application({"company": "X", "role": "R", "status": "Saved", "contacts": people, "channel": "warm"})
+    assert row["contacts"] == people and row["channel"] == "warm"
+    row = db.update_application(row["id"], {"contacts": people + [{"id": "b2", "name": "B", "status": "to_contact"}]})
+    assert [c["name"] for c in row["contacts"]] == ["Asha Rao", "B"]
+    out = list(csv.DictReader(io.StringIO(db.applications_csv())))
+    assert json.loads(out[0]["contacts"])[0]["name"] == "Asha Rao"          # the backup keeps real JSON
+    # a synced copy (user.enc) writes the same rows back into another database
+    other = DB(tmp_path / "o.db")
+    state.apply_user(other, {"applications": db.applications(), "settings": {}, "decisions": {}})
+    assert other.applications()[0]["contacts"][1]["name"] == "B"
+
+
+def test_proofs_survive_a_resume_reread():
+    from app.profile import carry_overrides
+    old = {"proofs": [{"title": "Model", "skills": ["Python"]}], "overrides": {"school": "University of Delhi"}}
+    new = carry_overrides(old, {"keywords": [], "search_terms": []})
+    assert new["proofs"][0]["title"] == "Model" and new["school"] == "University of Delhi"

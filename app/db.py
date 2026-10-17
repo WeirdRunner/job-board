@@ -8,7 +8,7 @@ import os
 import sqlite3
 import threading
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -44,10 +44,27 @@ CREATE TABLE IF NOT EXISTS runs (
 """
 
 APP_FIELDS = ["company", "role", "url", "location", "source", "applied_on", "status",
-              "next_step", "follow_up", "notes", "match"]
+              "next_step", "follow_up", "notes", "match", "kind", "channel", "contacts"]
+# Stored as JSON text in SQLite, handed out as lists/dicts.
+JSON_FIELDS = ("contacts",)
 # Column order of the tracker CSV (Export button and the auto-backup); scripts/import_applications.py reads it back.
 CSV_COLUMNS = ["company", "role", "status", "applied_on", "next_step", "follow_up", "location", "source", "url",
-               "notes", "match"]
+               "notes", "match", "kind", "channel", "contacts"]
+
+
+def enc_app(vals: dict) -> dict:
+    """Tracker values ready for SQLite: JSON fields become text (strings are assumed to be JSON already)."""
+    return {k: json.dumps(v) if k in JSON_FIELDS and isinstance(v, (list, dict)) else v for k, v in vals.items()}
+
+
+def dec_app(row) -> dict:
+    d = dict(row)
+    for k in JSON_FIELDS:
+        try:
+            d[k] = json.loads(d[k]) if d.get(k) else []
+        except (TypeError, ValueError):
+            d[k] = []
+    return d
 
 
 def now() -> str:
@@ -74,6 +91,9 @@ class DB:
         cols = {r[1] for r in self.conn.execute("PRAGMA table_info(applications)")}
         if "uid" not in cols:
             self.conn.execute("ALTER TABLE applications ADD COLUMN uid TEXT")
+        for col in ("kind", "channel", "contacts"):   # job|gig · cold|warm|referral|direct · people you reached out to
+            if col not in cols:
+                self.conn.execute(f"ALTER TABLE applications ADD COLUMN {col} TEXT")
         for (rid,) in self.conn.execute("SELECT id FROM applications WHERE uid IS NULL").fetchall():
             self.conn.execute("UPDATE applications SET uid=? WHERE id=?", (uuid.uuid4().hex, rid))
         self.conn.execute("CREATE UNIQUE INDEX IF NOT EXISTS applications_uid ON applications(uid)")
@@ -156,6 +176,16 @@ class DB:
             self.conn.commit()
         return n
 
+    def drop_stale(self, source: str, hours: float) -> int:
+        """Delete a source's postings older than `hours` (Freelancer.com's API terms: refresh within 24 h). Ones you
+        applied to are kept: the Tracker holds your own record of them."""
+        cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).replace(tzinfo=None).isoformat(timespec="seconds")
+        with self.lock:
+            n = self.conn.execute("DELETE FROM jobs WHERE source=? AND created_at < ? AND status != 'applied'",
+                                  (source, cutoff)).rowcount
+            self.conn.commit()
+        return n
+
     def update_job(self, job_id: str, **fields) -> None:
         for k in ("triage", "eval", "card"):
             if k in fields and not isinstance(fields[k], (str, type(None))):
@@ -205,13 +235,13 @@ class DB:
     def applications(self) -> List[dict]:
         with self.lock:
             rows = self.conn.execute("SELECT * FROM applications ORDER BY COALESCE(applied_on, created_at) DESC, id DESC")
-            return [dict(r) for r in rows]
+            return [dec_app(r) for r in rows]
 
     def applications_csv(self) -> str:
         out = io.StringIO()
         w = csv.DictWriter(out, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         w.writeheader()
-        w.writerows(self.applications())
+        w.writerows(enc_app(a) for a in self.applications())
         return out.getvalue()
 
     def _backup(self) -> None:
@@ -225,6 +255,8 @@ class DB:
         t = now()
         vals = {k: data.get(k) for k in APP_FIELDS}
         vals["status"] = vals["status"] or "Applied"
+        vals["kind"] = vals["kind"] or "job"
+        vals = enc_app(vals)
         vals["applied_on"] = vals["applied_on"] or t[:10]
         with self.lock:
             if data.get("job_id"):
@@ -249,10 +281,10 @@ class DB:
     def application(self, app_id: int) -> Optional[dict]:
         with self.lock:
             r = self.conn.execute("SELECT * FROM applications WHERE id=?", (app_id,)).fetchone()
-        return dict(r) if r else None
+        return dec_app(r) if r else None
 
     def update_application(self, app_id: int, data: dict) -> Optional[dict]:
-        fields = {k: v for k, v in data.items() if k in APP_FIELDS}
+        fields = enc_app({k: v for k, v in data.items() if k in APP_FIELDS})
         if fields:
             fields["updated_at"] = now()
             cols = ", ".join(f"{k}=?" for k in fields)

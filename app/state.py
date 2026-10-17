@@ -16,7 +16,7 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 from . import questions as Q
-from .db import APP_FIELDS, DB, now
+from .db import APP_FIELDS, DB, now, enc_app
 
 BOARD_STATUSES = ("new", "later", "applied", "rejected")
 DESC_CHARS = 30000           # whole descriptions (the longest seen are ~17k); board.enc is gzipped
@@ -112,7 +112,7 @@ def apply_user(db: DB, user: Dict[str, Any]) -> None:
             if uid not in want:
                 db.conn.execute("DELETE FROM applications WHERE uid=?", (uid,))
         for uid, r in want.items():
-            vals = {k: r.get(k) for k in ("job_id", *APP_FIELDS, "created_at", "updated_at")}
+            vals = enc_app({k: r.get(k) for k in ("job_id", *APP_FIELDS, "created_at", "updated_at")})
             if uid in mine:
                 if (mine[uid]["updated_at"] or "") != (r.get("updated_at") or ""):
                     cols = ", ".join(f"{k}=?" for k in vals)

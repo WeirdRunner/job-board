@@ -240,7 +240,8 @@ def _stop_engine():
 
 @app.get("/")
 def index():
-    return FileResponse(WEB / "index.html")
+    # No caching: index.html carries the ?v= of every script, so a stale copy would keep old code after an update.
+    return FileResponse(WEB / "index.html", headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/setup.html")
@@ -324,7 +325,7 @@ async def patch_profile(request: Request):
     if not p:
         raise HTTPException(400, "Build a profile first")
     patch = await request.json()
-    for k in ("keywords", "search_terms", "fields", "projects"):
+    for k in ("keywords", "search_terms", "fields", "projects", "proofs"):
         if k in patch:
             p[k] = patch[k]
     ov = dict(p.get("overrides") or {})
@@ -501,6 +502,14 @@ def list_jobs(status: str = "new", limit: int = 200):
             for r in rows]
 
 
+@app.get("/api/jobs/{job_id}")
+def get_job(job_id: str):
+    r = db.job(job_id)
+    if not r:
+        raise HTTPException(404)
+    return {**r["data"], "status": r["status"], "match": r["match"], "card": r["card"], "reason": r["reason"]}
+
+
 @app.post("/api/jobs/{job_id}/decision")
 async def decide(job_id: str, request: Request):
     action = (await request.json()).get("action")
@@ -520,7 +529,9 @@ async def decide(job_id: str, request: Request):
         app_row = db.add_application({
             "job_id": job_id, "company": d["company"], "role": d["title"], "url": d["url"],
             "location": d["location"],
-            "source": d["source"], "status": "Applied", "match": row["match"]})
+            "source": d["source"], "status": "Applied", "match": row["match"], "kind": d.get("kind") or "job"})
+        if app_row and app_row.get("status") == "Saved":      # you reached out first; now you've applied
+            app_row = db.update_application(app_row["id"], {"status": "Applied", "applied_on": now()[:10]})
     return {"status": status, "application": app_row}
 
 

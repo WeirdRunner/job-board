@@ -7,7 +7,7 @@ and logs it in your tracker.
 **Free. Private. Yours.** It runs on GitHub's free plan in your own account, and everything personal is
 encrypted with a passphrase only you know.
 
-### → [Set up your own board](https://deveshpat.github.io/job-board/setup.html) (about 5 minutes)
+### → [Set up your own board](https://weirdrunner.github.io/job-board/setup.html) (about 5 minutes)
 
 You need a free GitHub account. The setup page makes your copy, turns on your website, and sets up encryption
 from one GitHub key — no terminal, no installs.

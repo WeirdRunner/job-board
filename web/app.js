@@ -96,7 +96,8 @@ function route() {
 window.addEventListener("hashchange", route);
 
 /* ================================================================== APPLICATIONS (swipe deck) */
-let deck = { mode: "new", jobs: [], history: [] };
+let deck = { mode: "new", jobs: [], history: [], kind: (() => { try { return localStorage.getItem("deck-kind") || "all"; } catch (_) { return "all"; } })() };
+const isGig = (j) => j.kind === "gig";
 let keyHandler = null;
 
 function cleanupDeck() {
@@ -110,19 +111,34 @@ async function renderApplications() {
     api(`/api/jobs?status=${deck.mode}`),
     api("/api/status").then((s) => s.counts),
   ]);
-  deck.jobs = jobs;
+  const kinds = { all: jobs.length, job: jobs.filter((j) => !isGig(j)).length, gig: jobs.filter(isGig).length };
+  deck.jobs = deck.kind === "all" ? jobs : jobs.filter((j) => (deck.kind === "gig") === isGig(j));
   if (!deck.skills) deck.skills = ((await api("/api/profile").catch(() => null))?.keywords || []).filter((k) => k.keep).map((k) => k.name);
+  await Outreach.load().catch(() => null);
   const tab = (key, label) =>
     `<button data-mode="${key}" class="${deck.mode === key ? "active" : ""}">${label}<b>${counts[key] || 0}</b></button>`;
   view.innerHTML = `
     <div class="deck-head">
       <div class="seg" role="tablist">${tab("new", "To review")}${tab("later", "Later")}${tab("rejected", "Passed")}${tab("applied", "Applied")}</div>
-      <span class="faint" style="font-size:13px">Ranked by match score</span>
+      <div class="seg seg-sm" role="tablist" aria-label="Jobs or freelance gigs">${[["all", "All"], ["job", "Jobs"], ["gig", "Gigs"]].map(([k, l]) =>
+        `<button data-kind="${k}" class="${deck.kind === k ? "active" : ""}">${l}<b>${kinds[k]}</b></button>`).join("")}</div>
     </div>
     <div id="deck-area"></div>`;
-  view.querySelectorAll(".seg button").forEach((b) => (b.onclick = () => { deck.mode = b.dataset.mode; renderApplications(); }));
+  view.querySelectorAll(".seg button[data-mode]").forEach((b) => (b.onclick = () => { deck.mode = b.dataset.mode; renderApplications(); }));
+  view.querySelectorAll(".seg button[data-kind]").forEach((b) => (b.onclick = () => {
+    deck.kind = b.dataset.kind;
+    try { localStorage.setItem("deck-kind", deck.kind); } catch (_) { /* storage off */ }
+    renderApplications();
+  }));
   if (deck.mode === "new" || deck.mode === "later") drawDeck();
   else drawList();
+  $("#deck-area").addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-reach]");
+    if (!b) return;
+    const job = deck.jobs.find((x) => x.id === b.dataset.reach);
+    const row = (await api("/api/applications").catch(() => [])).find((r) => r.job_id === job?.id);
+    Outreach.open({ job, row });
+  });
 }
 
 function drawList() {
@@ -134,8 +150,9 @@ function drawList() {
   area.innerHTML = `<div class="list">${deck.jobs.map((j) => `
     <div class="card-box row-job">
       ${ring(j.card)}
-      <div class="grow"><div class="t">${esc(j.title)}</div><div class="muted" style="font-size:13px">${esc(j.company)} · ${esc(j.location || "")}${j.card?.pay ? ` · <b>ask ${esc(j.card.pay.ask)}</b>` : ""}</div></div>
+      <div class="grow"><div class="t">${esc(j.title)}${isGig(j) ? ` <span class="chip gig">Gig</span>` : ""}</div><div class="muted" style="font-size:13px">${esc(j.company)} · ${esc(j.location || "")}${j.card?.pay ? ` · <b>ask ${esc(j.card.pay.ask)}</b>` : ""}</div></div>
       <a class="btn small" href="${esc(j.url)}" target="_blank" rel="noopener">Open ${ICON.ext.replace("<svg", '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"')}</a>
+      <button class="btn small" data-reach="${j.id}">Reach out</button>
       <button class="btn small" data-undo="${j.id}">Back to review</button>
     </div>`).join("")}</div>`;
   area.querySelectorAll("[data-undo]").forEach((b) => (b.onclick = async () => {
@@ -258,9 +275,13 @@ document.addEventListener("toggle", (e) => {
 // Attribution the sources ask for: "via <source>" links to the source (app/sources.py SOURCE_HOME).
 const SOURCE_HOME = { remotive: "https://remotive.com", himalayas: "https://himalayas.app", jobicy: "https://jobicy.com",
   weworkremotely: "https://weworkremotely.com", arbeitnow: "https://www.arbeitnow.com", hackernews: "https://news.ycombinator.com",
-  greenhouse: "https://www.greenhouse.com", ashby: "https://www.ashbyhq.com", lever: "https://www.lever.co" };
+  greenhouse: "https://www.greenhouse.com", ashby: "https://www.ashbyhq.com", lever: "https://www.lever.co",
+  remoteok: "https://remoteok.com", workingnomads: "https://www.workingnomads.com", themuse: "https://www.themuse.com",
+  smartrecruiters: "https://www.smartrecruiters.com", freelancer: "https://www.freelancer.com" };
 const SOURCE_NAME = { remotive: "Remotive", himalayas: "Himalayas", jobicy: "Jobicy", weworkremotely: "We Work Remotely",
-  arbeitnow: "Arbeitnow", hackernews: "Hacker News", greenhouse: "Greenhouse", ashby: "Ashby", lever: "Lever" };
+  arbeitnow: "Arbeitnow", hackernews: "Hacker News", greenhouse: "Greenhouse", ashby: "Ashby", lever: "Lever",
+  remoteok: "Remote OK", workingnomads: "Working Nomads", themuse: "The Muse", smartrecruiters: "SmartRecruiters",
+  freelancer: "Freelancer.com (gigs)" };
 
 // What to ask for: from the posting's own range when it has one, otherwise a clearly-labelled estimate.
 const payLine = (p) => !p ? "" : `<div class="pay-line" title="${esc(p.basis)}"><span class="pay-ico" aria-hidden="true">💰</span>
@@ -290,8 +311,9 @@ function cardHTML(j) {
         <div><div class="verdict">${esc(tk?.verdict || tierLabel)}${c.unsure ? ' <span class="chip warn" title="The read on this one was split — double-check it">Unsure</span>' : ""}</div>
         <div class="sub">${tk ? `${tierLabel}${tk.summary.includes("—") ? " · " + esc(tk.summary.split("—")[1].replace(/\.$/, "").trim()) : ""}` : c.scored_by === "jev" ? `Scored${conf}` : "Keyword score (no engine)"}</div></div>
       </div>
-      <div class="chips">${(c.chips || []).map((x, i) => `<span class="chip ${i === 0 ? (c.location_ok ? "good" : "warn") : ""}">${esc(x)}</span>`).join("")}${j.salary && !c.pay ? `<span class="chip info">${esc(j.salary)}</span>` : ""}</div>
+      <div class="chips">${(c.chips || []).map((x, i) => `<span class="chip ${i === 0 ? (c.location_ok ? "good" : "warn") : ""}">${esc(x)}</span>`).join("")}${j.salary && !c.pay ? `<span class="chip info">${esc(j.salary)}</span>` : ""}${isGig(j) ? `<span class="chip gig">Gig</span>` : ""}${j.bids != null ? `<span class="chip ${j.bids > 40 ? "warn" : ""}" title="Proposals already sent">${j.bids} bids</span>` : ""}</div>
       ${payLine(c.pay)}
+      ${Outreach.cardLine(j)}
       ${tk ? `<details class="gut"${gutOpen() ? " open" : ""}>
         <summary><span class="gut-ico" aria-hidden="true">⚡</span><span class="gut-t">Gut check</span>
           <span class="gut-n">${tk.pros.length ? `<b class="p">✓ ${tk.pros.length}</b>` : ""}${tk.cons.length ? `<b class="c">! ${tk.cons.length}</b>` : ""}</span></summary>
@@ -517,6 +539,7 @@ async function renderProfile() {
         <h3 class="section-title">Projects to lead your applications with</h3>
         <div class="proj">${Object.entries(profile.projects).map(([n, d]) => `<div><b>${esc(n)}</b><span class="muted">${esc(d || "")}</span></div>`).join("")}</div>
       </section>` : ""}
+      <div id="p-proofs" class="o-late"></div>
     </div>
 
     <section class="card-box resume-card">
@@ -579,6 +602,7 @@ async function renderProfile() {
   $("#r-dl")?.addEventListener("click", downloadResume);
   $("#r-kev")?.addEventListener("click", async () => { await api("/api/profile/build", { method: "POST" }); renderProfile(); });
   if (res) showResumePdf($("#r-view"));
+  if ($("#p-proofs")) Outreach.proofSection($("#p-proofs")).catch((e) => console.warn(e));
   if (job.running || res?.building || (res && !res.pdf_current && !res.error && STATIC_MODE))
     profileTimer = setTimeout(() => location.hash.startsWith("#/profile") && renderProfile(), job.running ? 3000 : 10000);
 }
@@ -852,7 +876,8 @@ const pickyLabel = (v) => (v <= 30 ? "Show me more" : v <= 45 ? "Balanced" : v <
 async function renderSettings() {
   const [settings, st] = await Promise.all([api("/api/settings"), api("/api/status")]);
   status = st;
-  const SOURCES = ["remotive", "himalayas", "jobicy", "weworkremotely", "arbeitnow", "hackernews", "greenhouse", "ashby", "lever"];
+  const SOURCES = ["remotive", "himalayas", "jobicy", "weworkremotely", "arbeitnow", "hackernews", "remoteok", "workingnomads",
+    "themuse", "greenhouse", "ashby", "lever", "smartrecruiters", "freelancer"];
   const noEngine = !st.jev.available ? `<div class="warnbox"><b>No decision engine is configured.</b> Start the local Kev engine with <code>./run.sh</code> (see <code>.env</code>). Until then a basic keyword heuristic is used.</div>` : "";
   view.innerHTML = `
   <div class="settings">
@@ -885,15 +910,17 @@ async function renderSettings() {
       <p class="faint small">These tune themselves; change them only if you have a reason.</p>
       <h4>Job sources</h4>
       <div class="checks" id="s-sources">${SOURCES.map((s) => `<label><input type="checkbox" value="${s}" ${settings.sources.includes(s) ? "checked" : ""}> ${SOURCE_NAME[s] || s}</label>`).join("")}</div>
-      <p class="faint small">We Work Remotely is off by default for new boards: its API terms are stricter than its public feed.</p>
+      <p class="faint small">We Work Remotely is off by default for new boards: its API terms are stricter than its public feed.
+        Freelancer.com gigs are off by default too: its API terms ask that its data be refreshed daily and stored encrypted, so
+        its gigs leave the board after 24 hours, and you should only switch it on if this computer's disk is encrypted (FileVault).</p>
       <div class="range-row"><label for="s-age">Ignore postings older than (days)</label><input type="range" id="s-age" min="7" max="120" step="1" value="${settings.max_age_days}"><b id="s-age-v">${settings.max_age_days}</b></div>
       <div class="range-row"><label for="s-deep">Most jobs to read in depth per run</label><input type="range" id="s-deep" min="25" max="1000" step="25" value="${settings.max_deep}"><b id="s-deep-v">${settings.max_deep}</b></div>
       <label class="checks" style="margin-top:8px"><label><input type="checkbox" id="reeval"> Next manual run: re-read jobs already on the board</label></label>
     </details>
-    <p class="faint small attribution">Job data from ${Object.keys(SOURCE_HOME).filter((k) => !["greenhouse", "ashby", "lever"].includes(k))
+    <p class="faint small attribution">Job data from ${Object.keys(SOURCE_HOME).filter((k) => !["greenhouse", "ashby", "lever", "smartrecruiters"].includes(k))
       .map((k) => `<a href="${SOURCE_HOME[k]}" target="_blank" rel="noopener">${SOURCE_NAME[k]}</a>`).join(", ")}, and companies' own job boards
-      on <a href="${SOURCE_HOME.greenhouse}" target="_blank" rel="noopener">Greenhouse</a>, <a href="${SOURCE_HOME.ashby}" target="_blank" rel="noopener">Ashby</a>
-      and <a href="${SOURCE_HOME.lever}" target="_blank" rel="noopener">Lever</a>. Every job links to its original posting.</p>
+      on <a href="${SOURCE_HOME.greenhouse}" target="_blank" rel="noopener">Greenhouse</a>, <a href="${SOURCE_HOME.ashby}" target="_blank" rel="noopener">Ashby</a>,
+      <a href="${SOURCE_HOME.lever}" target="_blank" rel="noopener">Lever</a> and <a href="${SOURCE_HOME.smartrecruiters}" target="_blank" rel="noopener">SmartRecruiters</a>. Every job links to its original posting.</p>
   </div>`;
 
   const minEl = $("#s-min");
@@ -1249,6 +1276,7 @@ async function renderTracker() {
       <div class="add-foot"><span class="faint" id="t-hint" aria-live="polite"></span>
         <button type="button" class="btn" id="t-cancel">Cancel</button><button class="btn primary">Save application</button></div>
     </form>
+    <div id="t-week"></div>
     <div class="summary" id="t-summary"></div>
     <div id="t-table"></div>`;
   $("#t-q").oninput = (e) => { tracker.q = e.target.value; drawTable(); };
@@ -1299,6 +1327,14 @@ async function renderTracker() {
     toast(row.linked ? "Added · linked to the job on your board" : "Application added");
   };
   drawTable();
+  Outreach.weekPanel($("#t-week"), tracker.rows);
+  $("#t-table").addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-people]");
+    if (!b) return;
+    const row = tracker.rows.find((r) => r.uid === b.dataset.people);
+    const job = row?.job_id ? await api(`/api/jobs/${encodeURIComponent(row.job_id)}`).catch(() => null) : null;
+    await Outreach.open({ job: job || undefined, row });
+  });
 }
 
 function drawTable() {
@@ -1331,9 +1367,13 @@ function drawTable() {
       <tr data-id="${r.id}">
         <td class="c-match"><span class="m-num ${r.match == null ? "none" : r.match >= 75 ? "strong" : r.match >= 60 ? "good" : "stretch"}" title="${r.job_id ? "Match score from your board" : "Added by hand"}">${r.match != null ? Math.round(r.match) : "—"}</span></td>
         <td class="c-role">
-          <div class="rc-line"><input class="cell strong" data-k="role" value="${esc(r.role || "")}" placeholder="Role" aria-label="Role">
+          <div class="rc-line">${r.kind === "gig" ? `<span class="chip gig" title="Freelance gig">Gig</span>` : ""}<input class="cell strong" data-k="role" value="${esc(r.role || "")}" placeholder="Role" aria-label="Role">
             ${r.url ? `<a class="link-out" href="${esc(r.url)}" target="_blank" rel="noopener" title="Open posting" aria-label="Open posting">${ICON.ext}</a>` : ""}
             <button class="icon-btn link-edit" data-link="${r.id}" title="${r.url ? "Change link" : "Add the posting link"}" aria-label="Edit link">${r.url ? "✎" : "+ link"}</button></div>
+          <div class="rc-line people-line"><button class="btn tiny" data-people="${esc(r.uid)}" title="Proof, people to reach, drafts and follow-ups">
+            ${(r.contacts || []).length ? `People · ${(r.contacts || []).length}` : "Reach out"}</button>
+            ${r.channel && r.channel !== "cold" ? `<span class="chip ${r.channel === "referral" ? "good" : "info"}">${esc(r.channel)}</span>` : ""}
+            ${(r.contacts || []).some((c) => c.status === "messaged" && (c.followups?.length || 0) < 2 && (Date.now() - new Date((c.followups?.at(-1) || c.messaged_on) + "T00:00:00")) / 864e5 >= 6) ? `<span class="chip warn">follow-up due</span>` : ""}</div>
           ${cell(r, "company", "Company")}
         </td>
         <td class="c-status"><select class="status-sel st-${(r.status || "applied").toLowerCase()}" data-k="status">${STATUSES.map((s) => `<option ${s === r.status ? "selected" : ""}>${s}</option>`).join("")}</select></td>

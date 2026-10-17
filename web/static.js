@@ -245,12 +245,13 @@
     await buildResume();
     return resumeMeta();
   }
-  const EDITABLE = ["name", "headline", "location", "email", "goal", "level", "country", "languages"];   // app/profile.py
+  const EDITABLE = ["name", "headline", "location", "email", "goal", "level", "country", "languages", "github", "linkedin", "school"];   // app/profile.py
   const profileOut = () => S.user.profile ? { ...S.user.profile, ...(S.board?.labels || {}), photo_url: S.user.photo || null,
     resume: resumeMeta(), kev_behind: !!S.user.resume && S.user.profile.kev_rev !== S.user.resume.rev, job: { running: false } } : null;
 
   // -- the /api emulation ------------------------------------------------------------------------------
-  const APP_FIELDS = ["company", "role", "url", "location", "source", "applied_on", "status", "next_step", "follow_up", "notes", "match"];
+  const APP_FIELDS = ["company", "role", "url", "location", "source", "applied_on", "status", "next_step", "follow_up", "notes", "match",
+    "kind", "channel", "contacts"];
   const statusOf = (j) => S.user.decisions?.[j.id]?.status || j.status;
   const jobsView = () => (S.board?.jobs || []).map((j) => ({ ...j, status: statusOf(j) }));
   const app = (row) => ({ ...row, id: row.uid });
@@ -346,6 +347,11 @@
       const want = (q.get("status") || "new").split(",");
       return jobsView().filter((j) => want.includes(j.status)).sort((a, b) => (b.match ?? -1) - (a.match ?? -1));
     }
+    if ((m = p.match(/^\/api\/jobs\/([^/]+)$/)) && method === "GET") {
+      const j = jobsView().find((x) => x.id === decodeURIComponent(m[1]));
+      if (!j) httpError("Not found");
+      return j;
+    }
     if ((m = p.match(/^\/api\/jobs\/([^/]+)\/decision$/))) {
       const id = decodeURIComponent(m[1]);
       const status = { apply: "applied", reject: "rejected", later: "later", undo: "new" }[body.action];
@@ -355,9 +361,10 @@
         const j = (S.board?.jobs || []).find((x) => x.id === id);
         const existing = S.user.applications.find((a) => a.job_id === id);
         application = existing || { uid: crypto.randomUUID().replace(/-/g, ""), job_id: id, company: j?.company, role: j?.title,
-          url: j?.url, location: j?.location, source: j?.source, status: "Applied", applied_on: today(), match: j?.match,
+          url: j?.url, location: j?.location, source: j?.source, kind: j?.kind || "job", status: "Applied", applied_on: today(), match: j?.match,
           next_step: null, follow_up: null, notes: null, created_at: nowIso(), updated_at: nowIso() };
         if (!existing) S.user.applications.push(application);
+        else if (existing.status === "Saved") Object.assign(existing, { status: "Applied", applied_on: today(), updated_at: nowIso() });
         application = app(application);
       }
       changed();
@@ -371,7 +378,11 @@
       row.status ||= "Applied";
       row.applied_on ||= today();
       const job = row.url && (S.board?.jobs || []).find((j) => normUrl(j.url) === normUrl(row.url));
-      if (job) { row.job_id = job.id; row.match ??= job.match; S.user.decisions[job.id] = { status: "applied", at: nowIso() }; }
+      if (job) {
+        row.job_id = job.id; row.match ??= job.match; row.kind ??= job.kind || "job";
+        // Reaching out before applying ("Saved") leaves the job in your deck; swiping right later marks it applied.
+        if (row.status !== "Saved") S.user.decisions[job.id] = { status: "applied", at: nowIso() };
+      }
       S.user.applications.push(row);
       changed();
       return { ...app(row), linked: job ? { title: job.title, company: job.company } : null };

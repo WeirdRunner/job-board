@@ -23,6 +23,9 @@ from .profile import compact_candidate, default_languages
 from .sources import DEFAULT_COMPANIES, OPT_IN_SOURCES, SOURCES, fetch_all
 from .urls import norm_url as _norm_url
 
+# The sources every board saved before 2026-09-25 knew about (anything newer is offered to them once).
+LEGACY_SOURCES = ["remotive", "himalayas", "jobicy", "weworkremotely", "arbeitnow", "hackernews", "greenhouse", "ashby", "lever"]
+
 DEFAULT_SETTINGS = {
     "sources": [x for x in SOURCES if x not in OPT_IN_SOURCES],
     "companies": DEFAULT_COMPANIES,
@@ -32,6 +35,7 @@ DEFAULT_SETTINGS = {
     "daily_at": "09:00",      # daily run time while the app is open ("" = off); missed runs catch up on start
     "engine_mode": "local",   # "kaggle": decisions run on Kaggle (GPU → CPU), falling back to local Kev
     "workers": 8,
+    "plans": {},              # weekly plans: {"2026-W42": {"apply": 8, "reach": 5, "focus": "..."}}
 }
 DESC_CHARS = 9000
 KAGGLE_ONLY = "kaggle"        # engine "key" meaning: no hosted Jev — run decisions on Kaggle (scripts/ci_run.py)             # keep state lean: Jev accuracy drops with irrelevant bulk
@@ -195,7 +199,8 @@ def score_answers(a: dict, profile: dict, skills: List[str], gaps: List[str], mi
         "chips": list(dict.fromkeys(c for c in chips if c)),          # "Internship" can be both level and job type
         "location_ok": loc_choice in ("remote_open", "local_office") and listed != "elsewhere",
         "pay": suggest_pay(job, a["level"]["choice"], cand_level, profile.get("country") or "",
-                           local=listed == "yours" or loc_choice == "local_office") if job else None,
+                           local=listed == "yours" or loc_choice == "local_office")
+               if job and job.get("kind") != "gig" else None,                  # a gig shows its own budget instead
         "skills_matched": matched, "skills_gap": missing,
         "lead_project": None if lead in (None, "none") else lead,
         "take": kev_take(a, comp, cand_level, loc_choice, loc_label, matched, missing, confidence,
@@ -291,7 +296,18 @@ class Pipeline:
         self._thread: Optional[threading.Thread] = None
 
     def settings(self) -> dict:
-        return {**DEFAULT_SETTINGS, **(self.db.get("settings") or {})}
+        saved = self.db.get("settings") or {}
+        s = {**DEFAULT_SETTINGS, **saved}
+        # Sources added in an update are switched on once for existing boards; one you then switch off stays off.
+        seen = set(saved.get("sources_seen") or (LEGACY_SOURCES if "sources" in saved else SOURCES))
+        s["sources"] = list(s["sources"]) + [x for x in SOURCES if x not in seen and x not in OPT_IN_SOURCES
+                                             and x not in s["sources"]]
+        s["sources_seen"] = list(SOURCES)
+        # Company lists aren't edited in the UI: new defaults join whatever a board already had.
+        mine = saved.get("companies") or {}
+        s["companies"] = {k: list(dict.fromkeys(list(DEFAULT_COMPANIES.get(k, [])) + list(mine.get(k, []))))
+                          for k in {*DEFAULT_COMPANIES, *mine}}
+        return s
 
     # -- daily routine ------------------------------------------------------------
     def due(self, now) -> bool:
@@ -369,6 +385,9 @@ class Pipeline:
 
         terms = [t["name"] for t in profile["search_terms"] if t["keep"]]
         self._stage(f"Extract: {len(cfg['sources'])} sources · terms: {', '.join(terms)}")
+        stale = self.db.drop_stale("freelancer", hours=24)     # Freelancer.com's API terms: refresh within 24 h
+        if stale:
+            self.log(f"Removed {stale} Freelancer.com gigs older than a day (they're refetched if still open)")
         jobs = fetch_all(cfg["sources"], terms, cfg["companies"], self.log)
         cutoff = (date.today() - timedelta(days=cfg["max_age_days"])).isoformat()
         known = self.db.known_ids()

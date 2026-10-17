@@ -238,7 +238,8 @@ def build_profile(resume_path: Path, jev: Optional[Jev], display_name: str = "")
 
 
 # Fields you can edit on the Profile page; a rebuild keeps your edits (profile["overrides"]).
-EDITABLE = ("name", "headline", "location", "email", "goal", "level", "country", "languages")
+EDITABLE = ("name", "headline", "location", "email", "goal", "level", "country", "languages",
+            "github", "linkedin", "school")      # the last three feed outreach drafts and alumni search
 
 
 LOCAL_LANGUAGE = {"India": "Hindi", "Germany": "German", "France": "French", "Spain": "Spanish", "Netherlands": "Dutch",
@@ -271,6 +272,8 @@ def carry_overrides(old: Optional[dict], new: dict) -> dict:
     switched on/off, and ones you added yourself."""
     if not old:
         return new
+    if old.get("proofs"):                  # your proof list is yours, not the resume's
+        new["proofs"] = old["proofs"]
     legacy = "overrides" not in old        # made before edits were tracked: treat its picks as yours
     ov = dict(old.get("overrides") or {})
     new.update(ov)

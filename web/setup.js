@@ -15,7 +15,7 @@
   const params = new URLSearchParams(location.search);
   const API = params.get("gh_api") || "https://api.github.com";           // gh_api: local test stand-in
   const TEMPLATE = {                                                      // the repository this page is served from
-    owner: params.get("template_owner") || (location.hostname.endsWith(".github.io") ? location.hostname.split(".")[0] : "deveshpat"),
+    owner: params.get("template_owner") || (location.hostname.endsWith(".github.io") ? location.hostname.split(".")[0] : "WeirdRunner"),
     repo: params.get("template_repo") || location.pathname.split("/").filter(Boolean)[0] || "job-board",
   };
   const TOKEN_URL = "https://github.com/settings/tokens/new?scopes=repo,workflow&description=Job%20Board";
