@@ -1,0 +1,706 @@
+{
+ "jobs": {
+  "owner:abce82e2433bc7eb": {
+   "tech": true,
+   "field": "full_stack",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 3,
+   "relevant": false
+  },
+  "owner:d572d30e87e8a9e5": {
+   "tech": true,
+   "field": "applied_ai_products",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 3,
+   "relevant": false,
+   "note": "Title has no level and no years stated; Dutch-speaking requirement"
+  },
+  "owner:8ed6f6f84afaff38": {
+   "tech": true,
+   "field": "ai_ml_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 3,
+   "relevant": false
+  },
+  "owner:df822afcbebc5e31": {
+   "tech": true,
+   "field": "data_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "onsite",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false,
+   "note": "Spark/Delta runtime: data_engineering vs backend; work_mode inferred from remote=false + SF"
+  },
+  "owner:db415b7a08963b08": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "owner:c96c87ebb007af84": {
+   "tech": true,
+   "field": "backend",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": false
+  },
+  "owner:1ba972006f2b418b": {
+   "tech": true,
+   "field": "full_stack",
+   "level": "internship",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": "internship",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 3,
+   "relevant": false,
+   "note": "Internship despite 'Full-time' field; Sydney + Australian clearance"
+  },
+  "owner:f4d67cedd893996f": {
+   "tech": true,
+   "field": "data_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "owner:4da8a50295db5d8a": {
+   "tech": true,
+   "field": "backend",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "2_4",
+   "work_mode": "unclear",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": false
+  },
+  "owner:a6c39d78f6d535b5": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "owner:e4e35f6748d5bac1": {
+   "tech": true,
+   "field": "data_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "owner:6048af0434fe0879": {
+   "tech": false,
+   "field": "ai_ml_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "cs_engineering_degree",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false,
+   "note": "People-management role: tech false, field kept as ML engineering"
+  },
+  "owner:e577a7e8eedb44d8": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "unclear",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "owner:2a56a701f66137c1": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "owner:668d08126de1ffaf": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 0,
+   "relevant": false
+  },
+  "owner:0e623faccde310bf": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "onsite",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "owner:a7f91f83be5f55cf": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "owner:551d742f895a8ab0": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "'Associate' title but asks 4-6+ years, so mid"
+  },
+  "owner:fa8d60144b778be5": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "local_office",
+   "eligible": true,
+   "experience": "7_plus",
+   "work_mode": "onsite",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "Only India-eligible job; finance role needing 7-14 yrs, not relevant"
+  },
+  "owner:5baa7406229d82bb": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "onsite",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "owner:b463ea6b4e1cc386": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "owner:f2971e90742fed6b": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": true,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "Explicit pipeline/talent-pool posting ('future opportunity') -> red flag"
+  },
+  "owner:692fc5405f590c26": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "2_4",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "owner:2be93ab7e2678517": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "owner:034608919b867a62": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "Pre-sales SA: tech false so skill 0 per guide"
+  },
+  "owner:8f566fb364f8e9cf": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "owner:43af4f0eadb1b127": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "'Account Director' is an IC sales title; level by literal title rule"
+  },
+  "owner:50bd46569534e71a": {
+   "tech": true,
+   "field": "devops_platform",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "owner:229f683445a752d4": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "Manufacturing/supplier quality engineering; borderline tech"
+  },
+  "owner:dba71b7a7e328c9c": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "onsite",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  }
+ },
+ "titles": {
+  "owner:01f93d98734dde62": {
+   "field": false,
+   "above": true
+  },
+  "owner:e385273f47cd735e": {
+   "field": false,
+   "above": false
+  },
+  "owner:080fc1777d34ff9d": {
+   "field": false,
+   "above": true
+  },
+  "owner:1e5e229a793387eb": {
+   "field": false,
+   "above": false
+  },
+  "owner:06192a7000404826": {
+   "field": true,
+   "above": false
+  },
+  "owner:eb37133f0149a0ff": {
+   "field": false,
+   "above": true
+  },
+  "owner:426ea8f74ea1bde0": {
+   "field": true,
+   "above": false
+  },
+  "owner:93e997db5784ca31": {
+   "field": true,
+   "above": true
+  },
+  "owner:052681918418728f": {
+   "field": true,
+   "above": false
+  },
+  "owner:25946bb918f9aee1": {
+   "field": false,
+   "above": false
+  },
+  "owner:c38a713f96ac940d": {
+   "field": false,
+   "above": true
+  },
+  "owner:157fa5d05a4bcf23": {
+   "field": false,
+   "above": true
+  },
+  "owner:ca27bafc6f79d209": {
+   "field": false,
+   "above": true
+  },
+  "owner:0cf1cb32273b3a20": {
+   "field": false,
+   "above": true
+  },
+  "owner:dcbecdebb27d9de7": {
+   "field": false,
+   "above": false
+  },
+  "owner:3160b7ef62c14b9b": {
+   "field": true,
+   "above": true
+  },
+  "owner:1fa8c2ba5686e395": {
+   "field": false,
+   "above": false
+  },
+  "owner:24de06b829084fd0": {
+   "field": true,
+   "above": false
+  },
+  "owner:ac55d890493ba533": {
+   "field": false,
+   "above": true
+  },
+  "owner:77c8ac7abfcae1c9": {
+   "field": false,
+   "above": false
+  },
+  "owner:6d82051a78176252": {
+   "field": false,
+   "above": true
+  },
+  "owner:f0ed9523b9d31ddf": {
+   "field": false,
+   "above": true
+  },
+  "owner:0dc6a852f3758b37": {
+   "field": false,
+   "above": false
+  },
+  "owner:c83b8f48cace03da": {
+   "field": false,
+   "above": false
+  },
+  "owner:13d62369a98727e3": {
+   "field": true,
+   "above": true
+  },
+  "owner:ca04474e4868e039": {
+   "field": true,
+   "above": true
+  },
+  "owner:c5e56fedbdd8ba54": {
+   "field": false,
+   "above": false
+  },
+  "owner:4954445d845f9de2": {
+   "field": true,
+   "above": false
+  },
+  "owner:bbde6b1ad8803af8": {
+   "field": true,
+   "above": false
+  },
+  "owner:508de8e1e48823b1": {
+   "field": true,
+   "above": true
+  },
+  "owner:e8e584ff53342e3c": {
+   "field": false,
+   "above": true
+  },
+  "owner:02fe51fdc5fc70cc": {
+   "field": false,
+   "above": false
+  },
+  "owner:4ac98bc6d306dc83": {
+   "field": false,
+   "above": true
+  },
+  "owner:2214606ad50c7e10": {
+   "field": false,
+   "above": false
+  },
+  "owner:0008416d51ca17da": {
+   "field": false,
+   "above": false
+  },
+  "owner:fec3a7435d1414a7": {
+   "field": true,
+   "above": true
+  },
+  "owner:89185413b43e5e6d": {
+   "field": true,
+   "above": true
+  },
+  "owner:c310d3f27445d7d8": {
+   "field": true,
+   "above": false
+  },
+  "owner:e8680c15a6b97b09": {
+   "field": false,
+   "above": false
+  },
+  "owner:e153871a51bb92fc": {
+   "field": true,
+   "above": false
+  },
+  "owner:96d73f640270f890": {
+   "field": false,
+   "above": false
+  },
+  "owner:797432946d5426aa": {
+   "field": false,
+   "above": false
+  },
+  "owner:c2f75e073062d6ee": {
+   "field": false,
+   "above": false
+  },
+  "owner:8069ff8275e0d3c6": {
+   "field": false,
+   "above": false
+  },
+  "owner:105de45de54adb32": {
+   "field": false,
+   "above": true
+  },
+  "owner:e3bdc5be8c876463": {
+   "field": false,
+   "above": false
+  },
+  "owner:d89ec86209a44e41": {
+   "field": false,
+   "above": true
+  },
+  "owner:4295a1b1624c0e19": {
+   "field": false,
+   "above": true
+  },
+  "owner:16e4053a06221466": {
+   "field": false,
+   "above": true
+  },
+  "owner:2f9f44dad6587687": {
+   "field": false,
+   "above": false
+  },
+  "owner:ee906f07d11dd373": {
+   "field": false,
+   "above": false
+  },
+  "owner:8f2b4906530c9120": {
+   "field": false,
+   "above": true
+  },
+  "owner:8ebc4ad7f51174ed": {
+   "field": false,
+   "above": true
+  },
+  "owner:5b728d184703ec67": {
+   "field": false,
+   "above": true
+  },
+  "owner:974edad1e3d56a88": {
+   "field": null,
+   "above": true
+  },
+  "owner:007456ba4c6074a6": {
+   "field": false,
+   "above": true
+  },
+  "owner:d2668e2215dc121f": {
+   "field": false,
+   "above": false
+  },
+  "owner:f326bf378b6374c1": {
+   "field": true,
+   "above": true
+  },
+  "owner:4e72b6c9ec8c03fc": {
+   "field": false,
+   "above": false
+  },
+  "owner:f254cf5a4e6d54cb": {
+   "field": false,
+   "above": false
+  }
+ }
+}

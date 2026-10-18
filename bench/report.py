@@ -1,6 +1,7 @@
 """Score every results/*.json against gold.json and print a comparison table.
 
   ../.venv/bin/python bench/report.py            # markdown table to stdout, also results/report.md
+  ../.venv/bin/python bench/report.py --set v2   # benchmark v2 (six candidates): bench/v2/results/report.md
 """
 import json
 import statistics
@@ -38,7 +39,7 @@ def ece(conf_correct, bins=10):
     return err
 
 
-def evaluate(res, gold):
+def evaluate(res, gold, cands=None, states=None):
     r = {"name": res["name"]}
     G, A = gold["jobs"], res["jobs"]
     ids = [i for i in G if i in A]
@@ -62,12 +63,14 @@ def evaluate(res, gold):
     r["skill_mae"] = sum(abs(a - b) for a, b in sk) / len(sk) if sk else None
 
     # The number that matters: which jobs would reach the board (pipeline scoring, default threshold).
-    prof = {"level": "entry", "country": "India"}
     tp = fp = fn = tn = 0
     for i in ids:
-        if "relevant" not in G[i]:
+        if G[i].get("relevant") is None:
             continue
-        card = score_answers(A[i], prof, [], [], Q.DEFAULT_MIN_MATCH)
+        c = (cands or {}).get(i.split(":", 1)[0]) if cands else None
+        prof = ({"level": c["level"], "country": c["country"], "languages": c.get("languages")} if c
+                else {"level": "entry", "country": "India"})
+        card = score_answers(A[i], prof, [], [], Q.DEFAULT_MIN_MATCH, (states or {}).get(i))
         shown = not card["gates"]
         tp += shown and G[i]["relevant"]
         fp += shown and not G[i]["relevant"]
@@ -75,6 +78,9 @@ def evaluate(res, gold):
         tn += (not shown) and not G[i]["relevant"]
     r["board"] = f"TP {tp} · FP {fp} · FN {fn} · TN {tn}"
     r["board_correct"] = (tp + tn) / max(1, tp + fp + fn + tn)
+    r["board_precision"] = tp / (tp + fp) if tp + fp else None
+    r["board_recall"] = tp / (tp + fn) if tp + fn else None
+    r["board_f1"] = 2 * tp / (2 * tp + fp + fn) if tp else 0.0
 
     GT, AT = gold["titles"], res["titles"]
     tid = [i for i in GT if i in AT]
@@ -101,13 +107,45 @@ def fmt(v):
     return str(v)
 
 
+def gold_v2():
+    """Merge the hand labels (bench/v2/labels/*.json) into one gold dict."""
+    g = {"jobs": {}, "titles": {}}
+    for f in sorted((BENCH / "v2" / "labels").glob("*.json")):
+        d = json.loads(f.read_text())
+        for i, x in d["jobs"].items():
+            g["jobs"][i] = {"tech": x.get("tech"), "field": x.get("field"), "level": x.get("level"),
+                            "location": x.get("location"), "eligible": x.get("eligible"),
+                            "experience": x.get("experience"), "work_mode": x.get("work_mode"),
+                            "employment": x.get("employment"), "degree": x.get("degree"),
+                            "red_flags": x.get("red_flags"), "relevant": x.get("relevant"), "skill": x.get("skill")}
+            g["jobs"][i] = {k: v for k, v in g["jobs"][i].items() if v is not None}
+        for i, x in d["titles"].items():
+            g["titles"][i] = {k: v for k, v in x.items() if v is not None}
+    return g
+
+
 def main():
-    gold = json.loads((BENCH / "gold.json").read_text())
-    rows = [evaluate(json.loads(p.read_text()), gold) for p in sorted((BENCH / "results").glob("*.json"))]
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--set", default="v1", choices=["v1", "v2"])
+    ap.add_argument("--group", help="v2 only: score just the candidates whose name starts with this (owner, train, heldout)")
+    args = ap.parse_args()
+    base = BENCH if args.set == "v1" else BENCH / "v2"
+    cands = states = None
+    if args.set == "v1":
+        gold = json.loads((BENCH / "gold.json").read_text())
+    else:
+        gold = gold_v2()
+        sv = json.loads((base / "set.json").read_text())
+        cands, states = sv["candidates"], {j["id"]: j["state"] for j in sv["jobs"]}
+        if args.group:
+            gold = {k: {i: x for i, x in v.items() if i.startswith(args.group)} for k, v in gold.items()}
+    rows = [evaluate(json.loads(p.read_text()), gold, cands, states) for p in sorted((base / "results").glob("*.json"))]
     if not rows:
         print("no results yet")
         return
-    keys = ["jobs_answered", "board", "board_correct", "tech_acc", "tech_brier", "eligible_acc", "location_acc",
+    keys = ["jobs_answered", "board", "board_f1", "board_precision", "board_recall", "board_correct", "tech_acc",
+            "tech_brier", "eligible_acc", "location_acc",
             "level_acc", "experience_acc", "work_mode_acc", "field_acc", "employment_acc", "degree_acc",
             "red_flag_acc", "skill_mae", "choice_ece", "triage_field_acc", "triage_above_acc",
             "triage_field_brier", "triage_keep_recall", "sec_per_job", "sec_per_60_titles", "errors"]
@@ -115,7 +153,7 @@ def main():
     lines += [f"| {k} | " + " | ".join(fmt(r.get(k)) for r in rows) + " |" for k in keys]
     md = "\n".join(lines)
     print(md)
-    (BENCH / "results" / "report.md").write_text(md + "\n")
+    (base / "results" / f"report{'-' + args.group if args.group else ''}.md").write_text(md + "\n")
 
 
 if __name__ == "__main__":

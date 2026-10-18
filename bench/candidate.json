@@ -1,0 +1,59 @@
+{
+ "headline": "Python Developer \u00b7 Data Science \u00b7 AI/ML \u00b7 Full Stack",
+ "goal": "Looking for an AI/ML or Full Stack engineering role where shipping fast matters more than pedigree.",
+ "level": "entry",
+ "country": "India",
+ "location": "India",
+ "languages": [
+  "English",
+  "Hindi"
+ ],
+ "fields": [
+  "Building, training, fine-tuning, evaluating, or serving machine-learning or LLM models; ML infrastructure; MLOps",
+  "Building products or agents on top of LLMs/AI APIs: RAG, chatbots, agent tooling, AI features in apps",
+  "Product engineering across both frontend and backend",
+  "Server-side services, APIs, and databases",
+  "Statistics, analytics, experimentation, forecasting, and business insights from data"
+ ],
+ "skills": [
+  "Python",
+  "SQL",
+  "HTML",
+  "CSS",
+  "JavaScript",
+  "LaTeX",
+  "PyTorch",
+  "HuggingFace Transformers",
+  "PEFT/LoRA",
+  "quantization (4-bit)",
+  "llama.cpp",
+  "LangChain",
+  "OpenAI API",
+  "prompt engineering",
+  "evals",
+  "curriculum training",
+  "FastAPI",
+  "Django",
+  "REST",
+  "SSE streaming",
+  "PostgreSQL",
+  "MySQL",
+  "TypeScript",
+  "Next.js",
+  "React",
+  "Tailwind CSS",
+  "Requests",
+  "BeautifulSoup",
+  "Selenium",
+  "numpy"
+ ],
+ "projects": {
+  "Ouroboros": "Latent-reasoning LLM fine-tuning framework",
+  "EdgeRunner": "Agent harness & local-model serving platform",
+  "Across-The-Web": null,
+  "Skill-Binder": "Open-source portable skill library for LLM agents",
+  "QuizSocial-Data": "Scraped and normalized IMDB and Wikipedia (titles, cast, posters, plots) into the content database powering the live DumDumSocial quiz platform.",
+  "Sia": "Designed and deployed a production LLM chatbot that interviews users through a structured 8-step flow and matches them for meaningful conversations - integrated"
+ },
+ "summary": "Physics graduate who taught himself modern ML engineering by building it: fine-tuned a 3B-parameter hybrid-architecture LLM for latent reasoning on free Kaggle GPUs, built a full-stack agent-harness platform (FastAPI + Next.js + llama.cpp), and shipped production chatbots and scraping pipelines for various products. Comfortable across the entire stack - from custom PyTorch training loops and LoRA adapters to SSE streaming APIs, terminal-grade frontends, and CI/. Looking for an AI/ML or Full Stack engineering role where shipping fast matters more than pedigree."
+}

@@ -8,10 +8,11 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 from . import questions as Q
-from .jev import Jev
+if TYPE_CHECKING:                  # only a type hint: keeps this module free of network/database imports
+    from .jev import Jev
 
 # Terms we recognise anywhere in a resume, so PDFs without a clean skills table still work.
 TECH_LEXICON = [
@@ -256,7 +257,7 @@ def default_languages(country: str) -> list:
 
 def country_of(location: str) -> str:
     """The country named in a resume's location line ("Pune, India", "Berlin", "India")."""
-    from .pipeline import CITIES                      # local import: pipeline imports this module
+    from .scoring import CITIES                       # local import: scoring imports this module
     low = (location or "").lower()
     for c in Q.COUNTRIES:
         if re.search(rf"\b{re.escape(c.lower())}\b", low):

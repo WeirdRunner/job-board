@@ -11,7 +11,8 @@
    to the repo's `data` branch with the GitHub API, merging with other devices record by record. */
 (function () {
   const S = { key: null, user: null, board: null, userSha: null, cfg: null, token: null,
-              dirty: false, pushTimer: null, runsCache: null, runsAt: 0 };
+              dirty: false, pushTimer: null, runsCache: null, runsAt: 0,
+              local: false };   // true: the board lives in this browser only (web/local.js), no GitHub, no passphrase
   const nowIso = () => new Date().toISOString().slice(0, 19);
   const today = () => new Date().toISOString().slice(0, 10);
 
@@ -148,6 +149,7 @@
   }
 
   async function saveLocal() {
+    if (S.local) return idb.set("local.user", S.user);
     await idb.set("user.local", await Vault.encryptBlob(S.key, "user", S.user));
     await idb.set("user.dirty", S.dirty);
   }
@@ -161,7 +163,7 @@
   }
 
   async function push() {
-    if (!S.dirty || !S.token) return;
+    if (S.local || !S.dirty || !S.token) return;
     if (!S.userSha) { const f = await GH.file("user.enc").catch(() => null); S.userSha = f?.sha || null; }
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
@@ -213,6 +215,7 @@
   async function loadPdf(force) {                 // → S.pdf = {rev, bytes, error}
     const want = S.user.resume?.rev;
     if (!want) return null;
+    if (S.local) return (S.pdf = S.user.resume.pdf_b64 ? { rev: want, bytes: Vault.unb64(S.user.resume.pdf_b64), error: null } : null);
     if (!force && S.pdf && (S.pdf.rev === want || Date.now() - S.pdfAt < 10000)) return S.pdf;
     S.pdfAt = Date.now();
     let text = null;
@@ -233,6 +236,7 @@
     return { ...meta, pdf_rev: S.pdf?.rev || null, pdf_current: S.pdf?.rev === r.rev, error: err, latex: false };
   }
   async function buildResume() {
+    if (S.local) return refreshLocalProfile();      // no LaTeX here: the board re-reads the source instead
     await push();                                   // the Action reads user.enc from the repo
     if (!S.token) httpError("Add your GitHub token (Settings → Sync) so GitHub can build the PDF.");
     await GH.dispatch("resume.yml");
@@ -256,7 +260,7 @@
   const jobsView = () => (S.board?.jobs || []).map((j) => ({ ...j, status: statusOf(j) }));
   const app = (row) => ({ ...row, id: row.uid });
   const settings = () => ({ ...(S.board?.defaults || { min_match: 40, max_age_days: 45, max_deep: 300, daily_at: "09:00" }),
-                            ...(S.user.settings || {}), engine_mode: "kaggle" });
+                            ...(S.user.settings || {}), engine_mode: S.local ? "browser" : "kaggle" });
   function counts() {
     const c = {};
     for (const j of jobsView()) c[j.status] = (c[j.status] || 0) + 1;
@@ -276,6 +280,10 @@
     const [p, qs] = path.split("?");
     const q = new URLSearchParams(qs || "");
     let m;
+    if (S.local) {
+      const r = await localApi(p, q, method, body, opts);
+      if (r !== undefined) return r;
+    }
 
     if (p === "/api/status") {
       const run = await runStatus();
@@ -465,6 +473,117 @@
     httpError(`Not available in the web app: ${method} ${p}`);
   }
 
+  // -- the board in this browser only (web/local.js) -------------------------------------------------------
+  const LOCAL_ENGINE = "The board's model, on this device";
+  async function localApi(p, q, method, body, opts) {
+    if (p === "/api/status") {
+      const run = Local.state();
+      return {
+        jev: { available: true, engine: LOCAL_ENGINE, local: true, engine_state: null, model: "laya-jobs" },
+        counts: counts(), has_profile: !!S.user.profile, static: true, local: true, token: false,
+        pipeline: { running: run.running, stage: localStage(run), done: run.done, total: run.total,
+                    log: run.running ? run.log : S.board.last_log || [], error: run.error },
+        last_run: S.board.last_run || null,
+      };
+    }
+    if (p === "/api/pipeline/run") { startLocalRun(); return (await localApi("/api/status", q, "GET")).pipeline; }
+    if (p === "/api/profile/build") { await refreshLocalProfile(); return profileOut(); }
+    if (p === "/api/resume/upload") {
+      const name = q.get("filename") || "resume.pdf", file = opts.body;
+      if (!/\.(pdf|tex|txt|md)$/i.test(name)) httpError("Upload your resume as PDF, .tex or plain text");
+      await saveLocalResume(name, new Uint8Array(await file.arrayBuffer()));
+      return resumeMeta();
+    }
+    if (p === "/api/kaggle/accounts") return [];
+    return undefined;
+  }
+  function localStage(run) {
+    if (!run.running) return "idle";
+    const d = run.download;
+    return d && d.total && d.got < d.total ? `${run.stage} — ${Math.round(d.got / 1e6)} of ${Math.round(d.total / 1e6)} MB` : run.stage;
+  }
+  async function saveLocalResume(name, bytes) {
+    const rev = await revOf(bytes), isPdf = /\.pdf$/i.test(name);
+    S.user.resume = { kind: isPdf ? "pdf" : "tex", filename: name, rev, error: null, updated_at: nowIso(),
+                      tex: isPdf ? null : new TextDecoder().decode(bytes), pdf_b64: isPdf ? Vault.b64(bytes) : null };
+    S.pdf = isPdf ? { rev, bytes, error: null } : null;
+    changed("resume");
+    await refreshLocalProfile();
+  }
+  async function refreshLocalProfile() {
+    const r = S.user.resume;
+    if (!r) return;
+    const bytes = r.pdf_b64 ? Vault.unb64(r.pdf_b64) : new TextEncoder().encode(r.tex || "");
+    const p = await Local.profileFrom(new File([bytes], r.filename || "resume.tex"), S.user.profile);
+    S.user.profile = { ...p, fields: S.user.profile?.fields || p.fields, keywords: keepChosenSkills(S.user.profile, p),
+                       resume_rev: r.rev, kev_rev: r.rev };
+    changed("profile");
+  }
+  function keepChosenSkills(old, fresh) {          // the skills you ticked stay ticked when the resume is re-read
+    const chosen = new Set((old?.keywords || []).filter((k) => k.keep).map((k) => k.name));
+    if (!chosen.size) return fresh.keywords;
+    return [...fresh.keywords.filter((k) => chosen.has(k.name)), ...fresh.keywords.filter((k) => !chosen.has(k.name))]
+      .map((k) => ({ ...k, keep: chosen.has(k.name) }));
+  }
+  let boardSaveTimer = null;
+  const saveBoard = () => { clearTimeout(boardSaveTimer); boardSaveTimer = setTimeout(() => idb.set("local.board", S.board), 1500); };
+  function addRows(rows) {
+    const byId = new Map(S.board.jobs.map((j) => [j.id, j]));
+    const seen = new Set(S.board.seen);
+    for (const r of rows) {
+      seen.add(r.id);
+      if (r.status === "triaged_out") continue;                       // only its id is kept: never fetched again
+      const keep = r.status === "filtered" ? { ...r, description: (r.description || "").slice(0, 600) } : r;
+      byId.set(r.id, { ...(byId.get(r.id) || {}), ...keep });
+    }
+    S.board.jobs = [...byId.values()];
+    S.board.seen = [...seen];
+    saveBoard();
+  }
+  function startLocalRun() {
+    if (!S.user.profile) httpError("Upload your resume first");
+    Local.start({
+      settings: settings(), profile: S.user.profile,
+      known: S.board.seen, tracked: S.user.applications.map((a) => a.url).filter(Boolean),
+      onRows: addRows,
+      onDone: (stats, run) => {
+        S.board.last_run = { started: run.started, finished: nowIso(), stats };
+        S.board.last_log = run.log.slice(-40);
+        saveBoard();
+      },
+    });
+  }
+  async function startLocal(start, canUnlock = false) {
+    S.local = true;
+    S.canUnlock = canUnlock;
+    S.user = (await idb.get("local.user")) || null;
+    S.board = (await idb.get("local.board")) || { jobs: [], seen: [] };
+    S.board.defaults = (await idb.get("local.defaults")) || S.board.defaults || null;
+    S.board.engine = LOCAL_ENGINE;
+    Local.defaults().then((d) => { S.board.defaults = d; S.board.labels = d.labels; idb.set("local.defaults", d); }).catch(() => {});
+    navigator.storage?.persist?.();
+    if (!S.user) return renderOnboarding(start);
+    S.user.decisions ||= {}; S.user.applications ||= []; S.user.deleted_apps ||= {};
+    start();
+    const last = S.board.last_run?.finished;                           // nowIso(): UTC without a zone suffix
+    const age = last ? Date.now() - Date.parse(/Z|[+-]\d\d:\d\d$/.test(last) ? last : last + "Z") : Infinity;
+    if (!Local.state().running && age > 20 * 3600e3) startLocalRun();   // a new day: search again
+  }
+  function renderOnboarding(start) {
+    document.querySelectorAll(".tabs, .top-right").forEach((el) => (el.style.visibility = "hidden"));
+    Local.onboarding(document.getElementById("view"), { unlockHref: S.canUnlock ? "?unlock" : null }, async (profile, file) => {
+      S.user = { schema: 1, meta: {}, profile, settings: {}, decisions: {}, applications: [], deleted_apps: {} };
+      await idb.set("mode", "local");
+      await saveLocalResume(file.name, new Uint8Array(await file.arrayBuffer())).catch((e) => console.warn(e));
+      S.user.profile = { ...S.user.profile, ...profile, keywords: profile.keywords, fields: profile.fields };
+      await saveLocal();
+      document.querySelectorAll(".tabs, .top-right").forEach((el) => (el.style.visibility = ""));
+      startLocalRun();
+      location.hash = "#/applications";
+      start();
+    });
+  }
+
   function csv() {
     const cols = ["company", "role", "status", "applied_on", "next_step", "follow_up", "location", "source", "url", "notes", "match"];
     const cell = (v) => (v == null ? "" : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v));
@@ -511,6 +630,9 @@
   }
 
   async function boot(start) {
+    const want = new URLSearchParams(location.search).get("mode");
+    if (want === "local") { await idb.set("mode", "local"); history.replaceState(null, "", location.pathname + location.hash); }
+    if ((await idb.get("mode")) === "local") return startLocal(start);
     S.cfg = (await idb.get("config")) || repoFromLocation();
     const dev = new URLSearchParams(location.search);           // testing against a local GitHub stand-in
     if (dev.get("gh_api")) { S.cfg = { owner: dev.get("owner"), repo: dev.get("repo"), api: dev.get("gh_api") }; await idb.set("config", S.cfg); }
@@ -522,7 +644,10 @@
     if (remembered && keysText) {
       try { await unlocked(Vault.unb64(remembered), true); return start(); } catch (e) { console.warn(e); }
     }
-    renderUnlock(keysText ? JSON.parse(keysText) : null, start);
+    // Someone else's board (or yours on a new device): a visitor gets their own board in this browser, with a link
+    // to unlock this one; "?unlock" (that link) or no local alternative shows the passphrase screen.
+    if (!keysText || !new URLSearchParams(location.search).has("unlock")) return startLocal(start, !!keysText);
+    renderUnlock(JSON.parse(keysText), start);
   }
 
   function renderUnlock(keys, start) {
@@ -542,6 +667,7 @@
         : `<p class="muted">No encrypted data found for <b>${S.cfg.owner || "?"}/${S.cfg.repo || "?"}</b> yet.</p>
            <p class="muted">Set it up once from the Mac app: Profile → <i>Publish to GitHub</i>. Using someone else's copy? Make your own with "Use this template" on GitHub.</p>`}
         <p class="faint" id="u-msg" aria-live="polite"></p>
+        <p class="faint">Not your board? <a href="?mode=local">Start your own in this browser</a> — free, nothing to set up.</p>
         <details class="faint"><summary>Repository</summary>
           <div class="add-row"><input class="input" id="u-repo" value="${S.cfg.owner}/${S.cfg.repo}"><button class="btn" id="u-repo-save" type="button">Use</button></div></details>
       </div>`;
@@ -607,11 +733,17 @@
   }
 
   async function lock() {
+    if (S.local) return;
     await idb.del("remembered_key");
     location.reload();
   }
 
   async function backup() {
+    if (S.local) {
+      const blob = new Blob([JSON.stringify({ kind: "jobboard-local-backup", saved: nowIso(), user: S.user, board: S.board })],
+                            { type: "application/json" });
+      return Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `jobboard-${today()}.json` }).click();
+    }
     const blob = new Blob([JSON.stringify({ kind: "jobboard-backup", saved: nowIso(),
       "keys.json": await idb.get("keys.json"), "user.enc": await Vault.encryptBlob(S.key, "user", S.user),
       "board.enc": await idb.get("board.enc") })], { type: "application/json" });
@@ -621,6 +753,12 @@
 
   async function restore(file) {
     const b = JSON.parse(await file.text());
+    if (S.local) {
+      if (b.kind !== "jobboard-local-backup") throw new Error("That isn't a backup from a board in a browser");
+      S.user = mergeUser(S.user, b.user);
+      if (b.board) { addRows(b.board.jobs || []); S.board.seen = [...new Set([...S.board.seen, ...(b.board.seen || [])])]; }
+      return changed();
+    }
     const user = await Vault.decryptBlob(S.key, "user", b["user.enc"]);   // must be this data key
     S.user = mergeUser(S.user, user);
     changed();
@@ -636,6 +774,11 @@
     await GH.setSecret(name, value);
   }
 
-  window.Static = { boot, api, setToken, addPasskey, lock, backup, restore, csv, resumePdf, setSecret,
-                    state: () => ({ token: !!S.token, dirty: S.dirty, repo: S.cfg, passkeys: Vault.passkeysSupported() }) };
+  async function leaveLocal() {           // back to unlocking a GitHub-synced board; this browser's board stays saved
+    await idb.del("mode");
+    location.replace(location.pathname);
+  }
+
+  window.Static = { boot, api, setToken, addPasskey, lock, backup, restore, csv, resumePdf, setSecret, leaveLocal,
+                    state: () => ({ token: !!S.token, dirty: S.dirty, repo: S.cfg, passkeys: Vault.passkeysSupported(), local: S.local }) };
 })();

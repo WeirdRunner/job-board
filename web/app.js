@@ -7,6 +7,7 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 const pct = (p) => (p == null ? "" : `${Math.round(p * 100)}%`);
 
 let STATIC_MODE = false;   // GitHub Pages: no server; web/static.js answers /api calls from your decrypted data
+const LOCAL_MODE = () => STATIC_MODE && Static.state().local;   // the board lives in this browser only (web/local.js)
 
 async function api(path, opts = {}) {
   if (STATIC_MODE) return Static.api(path, opts);
@@ -891,9 +892,10 @@ async function renderSettings() {
           <span id="s-min-v"><b>${settings.min_match}</b> · ${pickyLabel(settings.min_match)}</span></div>
       </div>
       <div class="set-row">
-        <div><b>Daily search</b><div class="faint small">${STATIC_MODE ? "Runs on GitHub at this time in your timezone — your devices can be off."
+        <div><b>Daily search</b><div class="faint small">${LOCAL_MODE() ? "Runs here when you open the board, once a day. It reads postings in the background — keep the tab open until it's done."
+          : STATIC_MODE ? "Runs on GitHub at this time in your timezone — your devices can be off."
           : st.github?.enabled ? "Runs on GitHub at this time — the Mac can be off." : "Runs while the app is open, and catches up when you next start it."}</div></div>
-        <div class="inline"><label class="switch"><input type="checkbox" id="s-daily-on" ${settings.daily_at ? "checked" : ""}><span></span></label>
+        <div class="inline" ${LOCAL_MODE() ? "hidden" : ""}><label class="switch"><input type="checkbox" id="s-daily-on" ${settings.daily_at ? "checked" : ""}><span></span></label>
           <input class="input" type="time" id="s-daily" value="${esc(settings.daily_at || "09:00")}"></div>
       </div>
       <div class="set-row">
@@ -903,7 +905,7 @@ async function renderSettings() {
       <div id="run-status"></div>
     </section>
 
-    <section class="card-box" id="kaggle-box"></section>
+    <section class="card-box" id="kaggle-box" ${LOCAL_MODE() ? "hidden" : ""}></section>
 
     <details class="card-box adv">
       <summary>Advanced</summary>
@@ -950,6 +952,7 @@ async function renderSettings() {
   $("#run").onclick = () => startRun($("#reeval").checked);
   drawRunStatus(st.pipeline, st.last_run);
   if (st.pipeline.running) pollRun();
+  if (LOCAL_MODE()) return renderLocalStore();
   renderKaggle(settings);
   if (STATIC_MODE) renderSync(); else renderGithub();
 }
@@ -957,7 +960,8 @@ async function renderSettings() {
 async function startRun(reevaluate = false) {
   try {
     const r = await api("/api/pipeline/run", { json: { reevaluate } });
-    toast(r.stage?.startsWith("Started on GitHub") || STATIC_MODE ? "Search started on GitHub — new jobs show up when it finishes" : "Searching…");
+    toast(LOCAL_MODE() ? "Searching in this browser — new jobs appear as they're read"
+          : r.stage?.startsWith("Started on GitHub") || STATIC_MODE ? "Search started on GitHub — new jobs show up when it finishes" : "Searching…");
   } catch (e) { return toast(e.message); }
   if (location.hash.startsWith("#/settings")) pollRun();
 }
@@ -1119,6 +1123,26 @@ function renderSync() {
   $("#s-lock").onclick = () => Static.lock();
 }
 
+/* ------------------------------------------------------------------ board in this browser: storage */
+function renderLocalStore() {
+  const box = Object.assign(document.createElement("section"), { className: "card-box" });
+  box.innerHTML = `
+    <h3 class="section-title">Your data</h3>
+    <p class="faint" style="font-size:13px;margin-top:0">Everything — your resume, swipes and tracker — is saved in this browser only, and
+      job postings are read by the board's model on this device. Clearing this site's data in your browser deletes it, so keep a backup.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+      <button class="btn" id="s-backup">Download a backup</button>
+      <label class="btn">Restore from backup<input type="file" id="s-restore" accept="application/json" hidden></label>
+    </div>
+    <p class="faint" style="font-size:12.5px;margin-top:14px">Want it to search every day while your devices are off, and sync across them?
+      <a href="setup.html">Set up the GitHub version</a> (free, about 5 minutes). Already have one?
+      <a href="#" id="s-leave">Open your GitHub board here instead</a> — this browser's board stays saved.</p>`;
+  $("#kaggle-box").after(box);
+  $("#s-backup").onclick = () => Static.backup();
+  $("#s-restore").onchange = async (e) => { try { await Static.restore(e.target.files[0]); toast("Backup merged"); } catch (err) { toast(`Restore failed: ${err.message}`); } };
+  $("#s-leave").onclick = (e) => { e.preventDefault(); Static.leaveLocal(); };
+}
+
 /* ------------------------------------------------------------------ Kaggle accounts */
 async function renderKaggle(settings) {
   const box = $("#kaggle-box");
@@ -1229,7 +1253,7 @@ function pollRun() {
       refreshStatus();
       if (!st.pipeline.error && st.last_run) toast(`Done — ${st.last_run?.stats?.loaded ?? 0} new jobs on your deck`, { label: "Review", run: () => (location.hash = "#/applications") });
     }
-  }, STATIC_MODE ? 15000 : 1000);
+  }, STATIC_MODE && !LOCAL_MODE() ? 15000 : 1000);
 }
 
 /* ================================================================== TRACKER */

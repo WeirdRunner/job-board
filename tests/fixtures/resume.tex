@@ -1,0 +1,165 @@
+\documentclass[10pt,letterpaper]{article}
+
+\usepackage[top=0.1in,bottom=0in,left=0.65in,right=0.65in]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{fontawesome5}
+\usepackage{graphicx}
+
+\definecolor{darkgray}{RGB}{40,40,40}
+\definecolor{linkblue}{RGB}{0,0,238}
+
+\pagestyle{empty}
+\raggedbottom
+\setlength{\parindent}{0pt}
+
+\hypersetup{
+    colorlinks=true,
+    urlcolor=linkblue,
+    linkcolor=linkblue
+}
+
+% Section formatting
+\titleformat{\section}{\large\bfseries\scshape\color{darkgray}}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{5pt}{5pt}
+
+\titleformat{\subsection}[block]{\bfseries}{}{0em}{}
+\titlespacing{\subsection}{0pt}{2pt}{0pt}
+
+% Custom list environment
+\newlist{tightitemize}{itemize}{2}
+\setlist[tightitemize]{leftmargin=1.1em, itemsep=0pt, topsep=0pt, parsep=0pt, label=\textbullet}
+
+\newcommand{\entryheader}[3]{%
+    \textbf{#1} \hfill \textit{#2}\\[0pt]
+    \textit{\small #3}\\[1pt]
+}
+
+\begin{document}
+
+% ---------- Header ----------
+\begin{center}
+    {\LARGE \textbf{Test Candidate}}\\[2pt]
+    {\small \textbf{Python Developer $\cdot$ Data Science $\cdot$ AI/ML $\cdot$ Full Stack}}\\[2pt]
+    {\small
+    \faMapMarker*\, India \quad|\quad \faPhone*
+    \href{tel:+10000000000}{+1 000 000 0000} \quad|\quad \faEnvelope
+    \href{mailto:candidate@example.com}{\, candidate@example.com} \quad|\quad \faGithub
+    \href{https://github.com/deveshpat}{\, GitHub} \quad|\quad \faLinkedin
+    \href{https://www.linkedin.com/in/example/}{\, LinkedIn}
+    }
+\end{center}
+
+\vspace{-20pt}
+
+% ---------- Summary ----------
+\section*{}
+Physics graduate who taught himself modern ML engineering by building it: fine-tuned a 3B-parameter hybrid-architecture LLM for latent reasoning on free Kaggle GPUs, built a full-stack agent-harness platform (FastAPI + Next.js + llama.cpp), and shipped production chatbots and scraping pipelines for various products. Comfortable across the entire stack - from custom PyTorch training loops and LoRA adapters to SSE streaming APIs, terminal-grade frontends, and CI/. Looking for an AI/ML or Full Stack engineering role where shipping fast matters more than pedigree.
+
+% ---------- Skills ----------
+\section*{Skills}
+{\renewcommand{\arraystretch}{1.2} \small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+    \textbf{Languages} & Python, SQL, HTML, CSS, JavaScript, LaTeX \\
+    \textbf{AI/ML} & PyTorch, HuggingFace Transformers, PEFT/LoRA, quantization (4-bit), llama.cpp, LangChain, OpenAI API, prompt engineering, evals, curriculum training \\
+    \textbf{Backend} & FastAPI, Django, REST, SSE streaming, PostgreSQL, MySQL \\
+    \textbf{Frontend} & TypeScript, Next.js, React, Tailwind CSS \\
+    \textbf{Data/Automation} & Requests, BeautifulSoup, Selenium, numpy, pandas, matplotlib \\
+    \textbf{Infra/Tools} & Software Architecture, ETL Pipelines, CI/CD, Git, Docker, Kubernetes, GitHub Actions CI, Kaggle GPU workflows, Cloudflare Tunnel, HuggingFace Hub, Weights \& Biases, Linux, Telegram, Azure \\
+\end{tabularx}}
+
+
+% ---------- Experience ----------
+\section*{Experience}
+\entryheader{Dum Dum Social}{\bf{Delhi, India}}{Python Developer \hfill Mar '22 - Jul '23}
+\vspace{-10pt}
+{\begin{tightitemize}
+    \item \textbf{\href{https://github.com/deveshpat/QuizSocial-Data}{\textit{QuizSocial-Data}}}: Scraped and normalized IMDB and Wikipedia (titles, cast, posters, plots) into the content database powering the live DumDumSocial quiz platform.
+    
+    \item \textbf{\href{https://github.com/deveshpat/Telegram_bot}{\textit{Sia}}}: Designed and deployed a production LLM chatbot that interviews users through a structured 8-step flow and matches them for meaningful conversations - integrated into the DumDumSocial website and as a standalone Telegram bot.
+\end{tightitemize}}
+
+
+% ---------- Projects ----------
+\section*{Projects}
+
+\entryheader{\href{https://github.com/deveshpat/Ouroboros}{\textit{Ouroboros}} - Latent-reasoning LLM fine-tuning framework}
+{Mar '26 - Present}
+{\textit{\small PyTorch $\cdot$ HuggingFace Transformers $\cdot$ PEFT/LoRA $\cdot$ bitsandbytes $\cdot$ Kaggle GPUs $\cdot$ Weights \& Biases}}{}
+\vspace{-10pt}
+\begin{tightitemize}
+    \item Implemented Coconut-style latent reasoning on AI21's Jamba-Reasoning-3B (hybrid attention/Mamba/MoE): a custom \texttt{JambaForCausalLM} subclass runs latent passes inside \texttt{forward()}, triggered by \texttt{<|lat|>} tokens, with a learned halt gate for adaptive compute.
+    \item Built a curriculum trainer (subclassing HF \texttt{Trainer}) with a custom DGAC loss, LoRA adapters targeting attention + Mamba SSM + MoE expert projections, and adapter-only checkpointing.
+    \item Engineered cross-session training resume with HuggingFace Hub sync to run multi-day training within free Kaggle session limits; 4-bit quantized inference for edge deployment; CPU smoke-test suite for GPU-free iteration.
+\end{tightitemize}
+
+\vspace{5pt}
+\entryheader{\href{https://github.com/deveshpat/EdgeRunner}{\textit{EdgeRunner}} - Agent harness \& local-model serving platform}{Mar '26 - Present}
+{\textit{\small FastAPI $\cdot$ Next.js (App Router) $\cdot$ TypeScript $\cdot$ Tailwind $\cdot$ llama.cpp $\cdot$ SSE $\cdot$ Cloudflare Tunnel $\cdot$ pytest $\cdot$ GitHub Actions}}
+\vspace{-10pt}
+\begin{tightitemize}
+    \item Built an end-to-end platform for running tool-calling LLM agents on remote GPUs: FastAPI backend with a model/harness catalog, streaming chat endpoint, and pluggable harnesses (mock echo + live llama.cpp via OpenAI-compatible API).
+    \item Wrote a one-command Kaggle bootstrap that compiles \texttt{llama-server}, pulls a GGUF model, and exposes the backend through a Cloudflare tunnel - free GPU inference, reachable from anywhere.
+    \item Shipped a terminal-themed Next.js chat UI with token streaming, model/harness pickers, and an in-browser code runner; backend covered by a pytest suite and GitHub Actions CI.
+\end{tightitemize}
+
+\vspace{5pt}
+\entryheader{\href{https://github.com/deveshpat/Across-The-Web}{Across-The-Web}}{Nov '22}
+{\textit{\small Requests $\cdot$ BeautifulSoup $\cdot$ Selenium $\cdot$ Jupyter $\cdot$ YouTube API}}
+\vspace{-10pt}
+\begin{tightitemize}
+    \item Bootstrapped an AI-driven video production pipeline that generates and auto-publishes videos to a YouTube channel (Across The Web) end to end.
+\end{tightitemize}
+
+\vspace{5pt}
+\entryheader{\href{https://github.com/deveshpat/Skill-Binder}{\textit{Skill-Binder}} - Open-source portable skill library for LLM agents}
+{Apr '26 - Present}
+{JavaScript}
+\vspace{-10pt}
+\begin{tightitemize}
+    \item Designed a model-agnostic workflow system (one \texttt{SKILL.md} per workflow + a \texttt{router.json} phonebook) that gives any LLM - ChatGPT, Claude, Gemini, local models - on-demand structured capabilities: TDD, diagnosis, PRD writing, issue triage.
+\end{tightitemize}
+
+% ---------- Education ----------
+\section*{Education}
+\entryheader{B.Sc. Physics - Atma Ram Sanatan Dharma College, University of Delhi}{Aug '23 - Aug '26}{}
+
+% (Certificates left out of the resume for now; uncomment to bring them back.)
+% ---------- Certification ----------
+% \section*{Certificates}
+% {\small
+% \begin{tightitemize}
+%
+%     \item \textbf{Docker Foundations Professional Certificate} --- Docker / LinkedIn Learning \hfill Aug '26
+%     \begin{center}
+%         \includegraphics[width=\textwidth,height=0.43\textheight,keepaspectratio]{docker_crt.png}
+%     \end{center}
+%
+%     \item \textbf{Learning Kubernetes} --- LinkedIn Learning \hfill Aug '26
+%     \par\vspace{8pt}
+%     \begin{center}
+%         \includegraphics[width=\textwidth,height=0.43\textheight,keepaspectratio]{kubernetes_cert.png}
+%     \end{center}
+%
+%     \item \textbf{Software Architecture Foundations} --- LinkedIn Learning \hfill Aug '26
+%     \begin{center}
+%         \includegraphics[width=\textwidth,height=0.43\textheight,keepaspectratio]{sa1.png}
+%     \end{center}
+%
+%     \item \textbf{Software Architecture: From Developer to Architect} --- LinkedIn Learning \hfill Aug '26
+%     \begin{center}
+%         \includegraphics[width=\textwidth,height=0.43\textheight,keepaspectratio]{sa2.png}
+%     \end{center}
+%
+%     \item \textbf{Software Architecture: Patterns for Developers} --- LinkedIn Learning \hfill Aug '26
+%     \begin{center}
+%         \includegraphics[width=\textwidth,height=0.9\textheight,keepaspectratio]{sa3.png}
+%     \end{center}
+%
+% \end{tightitemize}}
+
+\end{document}

@@ -1,10 +1,11 @@
-# Publishes web/ as the GitHub Pages site. The site is static: your data is fetched encrypted from the
-# `data` branch and only decrypted in your browser.
+# Publishes the GitHub Pages site (scripts/build_site.sh): the app, plus the board's Python that runs in the browser
+# for boards kept in a browser. The site is static: a GitHub board's data is fetched encrypted from the `data` branch
+# and only decrypted in your browser.
 name: Pages
 on:
   push:
     branches: [main]
-    paths: ["web/**", ".github/workflows/pages.yml"]
+    paths: ["web/**", "app/**", "scripts/build_site.sh", ".github/workflows/pages.yml"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -21,11 +22,7 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          mkdir -p _site/static
-          cp web/index.html web/setup.html _site/
-          cp web/*.js web/*.css web/wordlist.txt _site/static/
-          touch _site/.nojekyll
+      - run: sh scripts/build_site.sh _site
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with: { path: _site }

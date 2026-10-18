@@ -61,6 +61,27 @@ as Actions secrets and turns on Pages. The web app is then at `https://your-user
 - If the site doesn't appear within a few minutes of publishing, re-run the *Pages* workflow from the
   repo's Actions tab.
 
+## The board in a browser (no account)
+
+Open the site without a synced board and it runs entirely in that browser:
+
+- **Logic** — the board's own Python, unchanged: `app/browser.py` and the modules it imports (sources, questions,
+  scoring, profile) run in [Pyodide](https://pyodide.org) inside a Web Worker (`web/worker.js`). `requests` works
+  through `pyodide-http` (synchronous XHR from the worker); there are no threads, so sources fetch one at a time.
+- **Network** — 12 of the 14 sources send `Access-Control-Allow-Origin`, so the page can read them directly;
+  Himalayas and Working Nomads don't, and stay GitHub-only. Nothing else leaves the browser.
+- **Decisions** — the board's decision model (`sysone/encoder.py`, ~300M parameters, one pass answers every
+  question) exported to ONNX in float16 (`sysone/export_onnx.py`; the dynamo exporter — onnxruntime's float16
+  converter rounds the rotary-position constants and breaks long postings) and run by onnxruntime-web on WebGPU, or
+  the CPU (`web/decider.js`, which re-implements the encoder's input format exactly, tokenizer quirks included). The
+  623 MB model is served from GitHub Pages of `WeirdRunner/job-board-model` in parts under GitHub's 100 MB limit
+  (`sysone/publish_model.py`) and kept in Cache Storage, so it downloads once per model version.
+- **Data** — profile, swipes, tracker and the board live in IndexedDB (`web/static.js` local mode, `web/local.js`),
+  with a backup file to keep. A search runs when the board opens and the last one is a day old: about 1–2 s per title
+  batch and 2–6 s per posting read in full on a laptop GPU.
+- **Onboarding** — upload a resume (PDF, .tex or text; read by the same `app/profile.py`), confirm country, level,
+  roles and top skills, and the first search starts.
+
 ## Which engine, and why (see `bench/`)
 
 `bench/` holds a frozen test set (76 real postings + 200 titles, hand-labelled against the resume) and a

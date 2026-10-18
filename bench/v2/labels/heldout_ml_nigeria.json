@@ -1,0 +1,701 @@
+{
+ "jobs": {
+  "heldout_ml_nigeria:119cee0a46d96413": {
+   "tech": false,
+   "field": "applied_ai_products",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false,
+   "note": "Engineering manager role (people mgmt + delivery) -> tech false; agent oversight/eval platform -> applied_ai_products"
+  },
+  "heldout_ml_nigeria:8ddd8b69d9d2c9cb": {
+   "tech": true,
+   "field": "ai_ml_engineering",
+   "level": "senior",
+   "location": "remote_open",
+   "eligible": true,
+   "experience": "not_stated",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false,
+   "note": "Remote anywhere with ~50% UK/EU overlap; Nigeria (WAT) qualifies -> remote_open; senior level + needs papers/distributed LLM training"
+  },
+  "heldout_ml_nigeria:d30964e540fac28b": {
+   "tech": true,
+   "field": "applied_ai_products",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "cs_engineering_degree",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:b4bc737d46b0b279": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:0309b1cf35616088": {
+   "tech": false,
+   "field": "other_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:9fc1aeb9b96840fe": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "cs_engineering_degree",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:a3c354f196be58fa": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:e265777376abddab": {
+   "tech": true,
+   "field": "ai_ml_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:7f84d5a9ee9caee2": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:8ddc121356a93525": {
+   "tech": true,
+   "field": "applied_ai_products",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 3,
+   "relevant": false,
+   "note": "'All levels' but explicitly not entry, no year count -> level null, experience not_stated; US-located remote -> restricted"
+  },
+  "heldout_ml_nigeria:f721b8d2d18fb734": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:0cb530ef2f8d7b9b": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:6f38d3269c5bc57d": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:048fe0994f7bc18d": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:fe3e61b0c66e3bdc": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:a3d280ba1fa48f9e": {
+   "tech": true,
+   "field": "data_science",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false,
+   "note": "Data Analyst title but payments technical-operations work; labelled data_science/tech"
+  },
+  "heldout_ml_nigeria:f23aa141d52bf785": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "2_4",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:bfd8f2c41bf17d35": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "unclear",
+   "employment": "full_time",
+   "degree": "advanced_degree",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "JD + US bar required -> advanced_degree, restricted"
+  },
+  "heldout_ml_nigeria:bcfc484444740808": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "entry",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "0_2",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:f20cd8872afab421": {
+   "tech": true,
+   "field": "data_science",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "2_4",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:a3b9079f55f26a61": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:4363ac7415d5a2f6": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:38a2c52a03070674": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:7583ad5912b43eea": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:373c60c8348527ca": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:8c3c3f84a492c3b4": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:72c6becfdbb2be75": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:b20ba7abba4d323c": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:be6d19662fe73803": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_ml_nigeria:173a5a6ad9b18e9b": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  }
+ },
+ "titles": {
+  "heldout_ml_nigeria:44f842f72e0c897a": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:0c63ca0ed4b602b9": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:b4cf3acefa8efd38": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:ab18025cc3fd3e28": {
+   "field": true,
+   "above": false
+  },
+  "heldout_ml_nigeria:f0af22a8509df25e": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:44c3c11b02971354": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:acc61bc0591a6d26": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:6f87e71cd5ca359c": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:1b9037005c5208a0": {
+   "field": true,
+   "above": false
+  },
+  "heldout_ml_nigeria:01a476c4e1629176": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:37a61b52fa6346af": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:17b26ac62275550c": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:1b5e5a15f84ea83c": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:c423c1370722d9f9": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:d0b94c8978c8b8e5": {
+   "field": null,
+   "above": false
+  },
+  "heldout_ml_nigeria:218c8f6a1ef49896": {
+   "field": true,
+   "above": false
+  },
+  "heldout_ml_nigeria:588474d95e39bf91": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:5af1c463f8c03cd6": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:6ac7adaac6d4bad5": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:72746ce8bd4daafc": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:e3b4f069a070c016": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:b3fc86bdf34530a6": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:2d691798d0658b90": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:7645775e206b7736": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:c388e7c7040e534d": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:d00fe321f1b7daa4": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:94c0ceb27b00f731": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:84d9b987c042b356": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:8139d3e34dd47604": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:3a72ccc3f279831a": {
+   "field": true,
+   "above": true
+  },
+  "heldout_ml_nigeria:40de64ff36fa30e0": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:adcf6db15f825f6e": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:e1e92d48378f70c1": {
+   "field": true,
+   "above": false
+  },
+  "heldout_ml_nigeria:c91cb5f922b93f8b": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:5e5ca75aad108817": {
+   "field": true,
+   "above": true
+  },
+  "heldout_ml_nigeria:dd8d773a7abaee8d": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:49672de699dcb0db": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:0e7d14a09140b485": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:fe9f5dfc4a4eb193": {
+   "field": true,
+   "above": true
+  },
+  "heldout_ml_nigeria:e66ba1c91a9d98a1": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:123ff0cdf61c7fcd": {
+   "field": true,
+   "above": true
+  },
+  "heldout_ml_nigeria:449becfeceb33b26": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:75a990a38fc5242a": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:66e7610f7f534b6c": {
+   "field": true,
+   "above": false
+  },
+  "heldout_ml_nigeria:c066f6a37857ed3a": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:919c7419d3e171fa": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:534984fc09851e0d": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:86ad6735f0ecfedd": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:ccf66598fbb98b2d": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:0e414fc178b827d5": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:aa099bca7d9af1fd": {
+   "field": true,
+   "above": true
+  },
+  "heldout_ml_nigeria:ef9b682b2be644af": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:f85023909861f513": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:40c4a93963bdb9be": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:ed4e68a33e559037": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:0a6d23b54e94e9c3": {
+   "field": false,
+   "above": false
+  },
+  "heldout_ml_nigeria:55f43679525fcf44": {
+   "field": false,
+   "above": true
+  },
+  "heldout_ml_nigeria:a6f1d7a8b6b1607f": {
+   "field": true,
+   "above": true
+  },
+  "heldout_ml_nigeria:0f4827259b2c0444": {
+   "field": true,
+   "above": true
+  },
+  "heldout_ml_nigeria:ef157d0be7ed6253": {
+   "field": false,
+   "above": false
+  }
+ }
+}

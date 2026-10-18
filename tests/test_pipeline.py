@@ -14,7 +14,7 @@ from app.db import DB
 from app.jev import Jev
 from app.profile import build_profile
 
-RESUME = Path(__file__).resolve().parents[2] / "Devesh_Patel_Resume.tex"
+RESUME = Path(__file__).resolve().parent / "fixtures" / "resume.tex"   # a sanitized copy of a real resume
 
 
 def _free_port() -> int:

@@ -705,3 +705,18 @@ details.gut .evidence { margin-bottom: 14px; }
 .li-kit { border-top: 1px dashed var(--line); margin-top: 8px; padding-top: 8px; }
 .extra { margin: 12px 0; }
 .extra summary { cursor: pointer; color: var(--muted); }
+
+/* onboarding: the board in this browser (web/local.js) */
+.unlock.onboard { max-width: 560px; }
+.steps { display: flex; gap: 8px; padding: 0; margin: 14px 0 18px; list-style: none; counter-reset: step; font-size: 13px; color: var(--faint); }
+.steps li { flex: 1; counter-increment: step; padding-top: 8px; border-top: 3px solid var(--line); }
+.steps li::before { content: counter(step) ". "; }
+.steps li.on { color: var(--text); border-top-color: var(--accent); }
+.drop { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 34px 16px; border: 2px dashed var(--line);
+        border-radius: var(--radius); cursor: pointer; text-align: center; }
+.drop:hover, .drop.over { border-color: var(--accent); background: var(--info-bg); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-check { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px;
+              font-size: 13px; cursor: pointer; }
+.chip-check:has(input:checked) { border-color: var(--accent); background: var(--info-bg); }
+.chip-check input { accent-color: var(--accent); margin: 0; }

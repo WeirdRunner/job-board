@@ -4,13 +4,19 @@ Every morning it finds jobs that fit **your** resume, reads each one for you, an
 worth applying or not, why, what they'll expect, and what to ask for. Swipe right to apply and it opens the posting
 and logs it in your tracker.
 
-**Free. Private. Yours.** It runs on GitHub's free plan in your own account, and everything personal is
-encrypted with a passphrase only you know.
+**Free. Private. Yours.** Everything personal stays in your browser — or, with the GitHub version, in your own
+GitHub account, encrypted with a passphrase only you know.
 
-### → [Set up your own board](https://weirdrunner.github.io/job-board/setup.html) (about 5 minutes)
+### → [Start in your browser](https://weirdrunner.github.io/job-board/?mode=local) — upload your resume, that's it
+
+No account, no keys, nothing to install: the board runs in your browser. It fetches postings from public job boards,
+and its own decision model reads them on your device (a one-time ~620 MB download, then cached). Your resume, swipes
+and tracker stay in that browser. It searches when you open it, once a day; keep the tab open while it reads.
+
+### → [Or set it up on GitHub](https://weirdrunner.github.io/job-board/setup.html) (about 5 minutes) — searches every day, syncs your devices
 
 You need a free GitHub account. The setup page makes your copy, turns on your website, and sets up encryption
-from one GitHub key — no terminal, no installs.
+from one GitHub key — no terminal, no installs. It runs every morning on GitHub even when your devices are off.
 
 ---
 
@@ -43,6 +49,9 @@ Each posting is read by a "System One" decision model that answers typed questio
 in your country? what level is it? how well do your skills cover it?* — with probabilities, and code turns the
 answers into a match score and hard filters. You choose the engine during setup:
 
+- **In your browser:** the board's own model, a ~300M-parameter encoder that answers every question about a posting
+  in one pass (WebGPU, or the CPU), trained on open models' answers to the board's own questions (never on a paid
+  API's).
 - **Free:** your own free Kaggle account runs an open model ([Kev](https://github.com/jaredpalmer/kev)) on
   Kaggle's GPUs.
 - **Faster:** a [TypeSafe](https://typesafe.ai) API key (you pay TypeSafe directly — typically cents a day).

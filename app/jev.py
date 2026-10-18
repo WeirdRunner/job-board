@@ -22,6 +22,8 @@ from typing import Any, Dict, Optional
 
 import requests
 
+from .systemone import choice, noul, score  # noqa: F401  (question builders; re-exported)
+
 API_URL = os.environ.get("JEV_BASE_URL", "https://api.typesafe.ai").rstrip("/") + "/v1/systemone"
 MODEL = os.environ.get("JEV_MODEL", "jev-latest")
 # 64k tokens covers state + all questions; stay well under it (≈4 chars/token).
@@ -43,21 +45,6 @@ def load_api_key() -> Optional[str]:
         if f.exists():
             return f.read_text().strip() or None
     return None
-
-
-def noul(instructions: Any, true: Any = None, false: Any = None) -> dict:
-    q: Dict[str, Any] = {"type": "noul", "instructions": instructions}
-    if true is not None or false is not None:
-        q["criteria"] = {k: v for k, v in (("true", true), ("false", false)) if v is not None}
-    return q
-
-
-def choice(instructions: Any, criteria: Dict[str, Any]) -> dict:
-    return {"type": "choice", "instructions": instructions, "criteria": criteria}
-
-
-def score(instructions: Any, levels: list) -> dict:
-    return {"type": "score", "instructions": instructions, "criteria": levels}
 
 
 class Jev:

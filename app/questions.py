@@ -25,9 +25,10 @@ Pipeline stages and what Jev decides at each one:
 """
 from __future__ import annotations
 
+import re
 from typing import Dict, List
 
-from .jev import choice, noul, score
+from .systemone import choice, noul, score
 
 # ---------------------------------------------------------------------------
 # Shared option sets
@@ -295,6 +296,7 @@ GATE_LOCATION_ELIGIBLE_MIN = 0.4  # p(remote_open) + p(local_office) + half of p
 GATE_LEVEL_FIT_MIN = 0.35         # probability-weighted LEVEL_FIT; below = mostly above the candidate's level
 GATE_EXPERIENCE_FIT_MIN = 0.35    # probability-weighted EXPERIENCE_FIT; below = asks for many more years
 GATE_RED_FLAGS_MAX = 0.6
+GATE_SKILL_MIN = 0.0               # expected skill_alignment (0-4) below this = few of your core skills; 0 = off
 GATE_OTHER_LANGUAGE_MAX = 0.6      # "needs a language you don't list"; a posting written in one is gated in code
 
 ADVANCED_DEGREE_PENALTY = 12      # points off when a master's/PhD is required (p > 0.6)
@@ -304,3 +306,13 @@ LOW_CONFIDENCE = 0.5              # below this, the card shows a "Jev unsure" ba
 DEFAULT_MIN_MATCH = 40            # jobs scoring below this are not loaded on the board (bench/: Kev-4B keeps
                                   # 4/4 good jobs with 1 false positive at 40; 1/4 at 55. The hard gates above
                                   # do the real filtering, this only trims weak matches.)
+
+
+def _words(s: str) -> set:
+    return {t for t in re.split(r"[^a-z0-9+#]+", s.lower()) if t}
+
+
+def gap_vocab(skills: List[str]) -> List[str]:
+    """SKILL_VOCAB entries the candidate's skills don't already cover (the "gap_" chip questions)."""
+    have = [_words(s) for s in skills]
+    return [g for g in SKILL_VOCAB if not any(_words(g) & h for h in have)]

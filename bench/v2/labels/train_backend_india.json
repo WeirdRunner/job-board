@@ -1,0 +1,701 @@
+{
+ "jobs": {
+  "train_backend_india:6eda67c7c582911b": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "local_office",
+   "eligible": true,
+   "experience": "7_plus",
+   "work_mode": "onsite",
+   "employment": null,
+   "degree": "cs_engineering_degree",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "Frontline platform support role; treated as support (tech false) despite technical reqs"
+  },
+  "train_backend_india:7a5c059032db0466": {
+   "tech": true,
+   "field": "devops_platform",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": false
+  },
+  "train_backend_india:ea9b6a5a0973c114": {
+   "tech": true,
+   "field": "devops_platform",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_backend_india:c4c6a051ec277c33": {
+   "tech": true,
+   "field": "devops_platform",
+   "level": "staff_plus",
+   "location": "remote_open",
+   "eligible": true,
+   "experience": "not_stated",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": false,
+   "note": "GitLab all-remote, listed Bangalore -> remote_open; staff level too far above mid"
+  },
+  "train_backend_india:28546ec2400b85dd": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:db7131832f16aed2": {
+   "tech": true,
+   "field": "devops_platform",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 3,
+   "relevant": false
+  },
+  "train_backend_india:685db2d045572a48": {
+   "tech": true,
+   "field": "full_stack",
+   "level": "internship",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "onsite",
+   "employment": "internship",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": false
+  },
+  "train_backend_india:13a75e397de7a2f9": {
+   "tech": true,
+   "field": "backend",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": false
+  },
+  "train_backend_india:f35f419465ebedb0": {
+   "tech": true,
+   "field": "backend",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_backend_india:5303082fc4f89183": {
+   "tech": true,
+   "field": "backend",
+   "level": "senior",
+   "location": "unclear",
+   "eligible": null,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 4,
+   "relevant": false,
+   "note": "Strong skill fit (Kafka/REST/Postgres/payments) but location only 'Hybrid' with no city -> unclear -> not relevant"
+  },
+  "train_backend_india:5af1d936b26a44d9": {
+   "tech": true,
+   "field": "data_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_backend_india:d0f8542fe8bcd06f": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "local_office",
+   "eligible": true,
+   "experience": "7_plus",
+   "work_mode": "onsite",
+   "employment": null,
+   "degree": "cs_engineering_degree",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:a6da6f4c52a59c8b": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:ee299e55ebdcece8": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:219b8cfb866e979b": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "entry",
+   "location": "local_office",
+   "eligible": true,
+   "experience": "2_4",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:e9b7d6bdb4eb33ac": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:d93dc11958d2700f": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:c0b74d180c82bc52": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "Customer-facing technical consultant (post-sales); writes code but not mostly building software -> tech false"
+  },
+  "train_backend_india:21391d93ae8d02ee": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:7cdf1021d17282ef": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "local_office",
+   "eligible": true,
+   "experience": "4_7",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "Accounting degree mandatory; no category fits exactly, used any_degree_or_equivalent"
+  },
+  "train_backend_india:cd0b58fc639fcda5": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": null,
+   "location": "local_office",
+   "eligible": true,
+   "experience": "not_stated",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:8d6705289cde013a": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:3773ee4c80b4d92b": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:622c81e8eb625ab1": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_backend_india:2551ee6518dd0013": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:f874fea2f9ff6681": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "unclear",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:1bd8b423eb262e5e": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:1196d03197420a4e": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "entry",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "2_4",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:5adb49c4d68a876f": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_backend_india:4288ab46520588c9": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 0,
+   "relevant": false
+  }
+ },
+ "titles": {
+  "train_backend_india:cd332d493f02059f": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:a049b456ab99a4ed": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:78397bce9aad6775": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:70558e43d7a420a9": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:35eb1d8ed8b63da7": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:a2f838a4e0bc102b": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:1a6ab5d0e4d133d1": {
+   "field": null,
+   "above": true
+  },
+  "train_backend_india:a043095d9719a9fa": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:71d88db6bb5ec4b1": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:d2a7f50b4c316b46": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:0da1ecdb144a5e1a": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:3b718e8e68ba5469": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:41ddd7ca9cd4d29e": {
+   "field": null,
+   "above": true
+  },
+  "train_backend_india:a41c840709363e0d": {
+   "field": true,
+   "above": true
+  },
+  "train_backend_india:bfa63cdca328dcd7": {
+   "field": true,
+   "above": false
+  },
+  "train_backend_india:45239d69e58c275f": {
+   "field": null,
+   "above": false
+  },
+  "train_backend_india:f4438cee91768c70": {
+   "field": true,
+   "above": true
+  },
+  "train_backend_india:ce9316646e38e0b3": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:40f6cd69d4d52644": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:d6cc6fe4d2641a4d": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:697f69228907330c": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:82521a8bf3f2effd": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:92e43191cd1a8dc9": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:26f8843b5433b10c": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:8809a5c4620581fc": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:54e1d0de236b8504": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:38e5fc420a805ef4": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:825ab6fd5f2994d5": {
+   "field": null,
+   "above": true
+  },
+  "train_backend_india:00e621dc8d6cde81": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:c60b07f21139f648": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:02a540ff94ae2070": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:e722a2b9556cc624": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:d54d8b2a6e18b98e": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:41d8b3c744ffe164": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:727380d02493e353": {
+   "field": true,
+   "above": true
+  },
+  "train_backend_india:d6807e03e1c1ddcb": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:08640f49f991ba51": {
+   "field": true,
+   "above": true
+  },
+  "train_backend_india:ce11331241912dc5": {
+   "field": null,
+   "above": true
+  },
+  "train_backend_india:366c0741a4122ced": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:09b5977644e7d6fe": {
+   "field": true,
+   "above": true
+  },
+  "train_backend_india:3a876e93eba62dfb": {
+   "field": true,
+   "above": true
+  },
+  "train_backend_india:90f615fc143d81fb": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:a8d4a3659703b973": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:4974e889cdd0f3eb": {
+   "field": null,
+   "above": true
+  },
+  "train_backend_india:d8f4e87545400b5b": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:c72afd7f6c2926ae": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:2132d92685909067": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:d27d8e3539366fd8": {
+   "field": null,
+   "above": false
+  },
+  "train_backend_india:b45191a07215769b": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:46e448a2ce5c0c62": {
+   "field": true,
+   "above": true
+  },
+  "train_backend_india:95464d07e5f89b85": {
+   "field": true,
+   "above": false
+  },
+  "train_backend_india:a24eb9db5acbe79d": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:9488384ed4e4ce79": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:616d6ba2d9b45b27": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:86e971a092ce0072": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:cf557cbb5569083f": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:af16dd4ecd3d5984": {
+   "field": false,
+   "above": false
+  },
+  "train_backend_india:b4d8ff684247ffcb": {
+   "field": null,
+   "above": true
+  },
+  "train_backend_india:9947243b5ccda2aa": {
+   "field": false,
+   "above": true
+  },
+  "train_backend_india:a62efd3c59831957": {
+   "field": false,
+   "above": true
+  }
+ }
+}

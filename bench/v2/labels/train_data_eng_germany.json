@@ -1,0 +1,701 @@
+{
+ "jobs": {
+  "train_data_eng_germany:202658ea0213a3b0": {
+   "tech": true,
+   "field": "applied_ai_products",
+   "level": null,
+   "location": "remote_open",
+   "eligible": true,
+   "experience": "not_stated",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_data_eng_germany:5f2eeb888c01c09e": {
+   "tech": true,
+   "field": "backend",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "2_4",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_data_eng_germany:9beb10e99be746de": {
+   "tech": true,
+   "field": "full_stack",
+   "level": null,
+   "location": "remote_open",
+   "eligible": true,
+   "experience": "not_stated",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_data_eng_germany:34b4345f381b8dda": {
+   "tech": true,
+   "field": "full_stack",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_data_eng_germany:5252fd837992c114": {
+   "tech": true,
+   "field": "applied_ai_products",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_data_eng_germany:ec7016f5c1272bea": {
+   "tech": true,
+   "field": "backend",
+   "level": "staff_plus",
+   "location": "remote_open",
+   "eligible": true,
+   "experience": "not_stated",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false,
+   "note": "Title says Spain but body lists Spain/Sweden/UK/Ireland/Germany; staff level too high"
+  },
+  "train_data_eng_germany:61c6ae6cb1862145": {
+   "tech": true,
+   "field": "applied_ai_products",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_data_eng_germany:581d89d99de0159a": {
+   "tech": true,
+   "field": "backend",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_data_eng_germany:d2b5376994569551": {
+   "tech": true,
+   "field": "data_engineering",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 3,
+   "relevant": false,
+   "note": "Strong skill fit (BigQuery/dbt/SQL) but SF/NYC in-office"
+  },
+  "train_data_eng_germany:2612375095dd6785": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "remote_open",
+   "eligible": true,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "Germany listed among locations; remote flag set"
+  },
+  "train_data_eng_germany:1d1e57dac5ac365d": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:627c4945c41b84f2": {
+   "tech": true,
+   "field": "full_stack",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_data_eng_germany:ee4b6e4238e58b4a": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:991ba2a72b8aaf19": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:eb1f300910e52537": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_data_eng_germany:0e0ca2ab0db927c8": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "entry",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:76426b81601e71aa": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:f6e0a9792ed2eec2": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:01b269667a412c72": {
+   "tech": false,
+   "field": "other_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "2_4",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "Customer-facing services architect: tech false, security field"
+  },
+  "train_data_eng_germany:ed22158c0e8a7e21": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "train_data_eng_germany:9d3dd0e4a17f3485": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:3fd6980f506238e7": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "2_4",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:7f48e7a47662083a": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:29b04e53a62de1e7": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "onsite",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:8898c41a8232e241": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:d2964b1f3abc4cc9": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:6c852e79d00e7efd": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "unclear",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:d884610e9287e378": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:f86428b8dfa084a8": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "train_data_eng_germany:d67b15b3c1bbd743": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "entry",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "'Associate' title vs 5+ yrs under Desired Skills and Experience"
+  }
+ },
+ "titles": {
+  "train_data_eng_germany:a724ff9fa60e09e7": {
+   "field": null,
+   "above": false
+  },
+  "train_data_eng_germany:23c1dc5e762c4400": {
+   "field": null,
+   "above": false
+  },
+  "train_data_eng_germany:3412efea13832fd0": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:a6f7066f30914342": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:2f0eabf9af0701ee": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:9ec4af5522527640": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:41a244ca396567e7": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:2b1cf7341656e295": {
+   "field": null,
+   "above": false
+  },
+  "train_data_eng_germany:9d09cad37c416520": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:d4d74ef231294063": {
+   "field": null,
+   "above": true
+  },
+  "train_data_eng_germany:bb304ed9f440b938": {
+   "field": null,
+   "above": true
+  },
+  "train_data_eng_germany:18640cac2c2729c0": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:3b1b1a512d40c696": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:9d79f5e85025d8a6": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:60cf7d381daa77db": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:00b39556427643a5": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:c5c6ac5c37ad5572": {
+   "field": null,
+   "above": false
+  },
+  "train_data_eng_germany:ff1755323a8cfb1c": {
+   "field": true,
+   "above": true
+  },
+  "train_data_eng_germany:345fbf37c8f8220f": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:cb033d144872171e": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:55619310ba3497ca": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:d52fc5f28aedab89": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:3ea1e2f823616039": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:12334084060a70fe": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:382b92fc8cb4706d": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:5a8dc6149b6200d6": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:e0a1f1af903003a8": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:97fd7939a6ec0548": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:c7ab1932be4a21c3": {
+   "field": null,
+   "above": true
+  },
+  "train_data_eng_germany:076aaccf7c9e0ed4": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:39288356f541e4bb": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:27a5c5207728345c": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:d0e4704fcdf30939": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:1f21a0a761ddcfe0": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:e503865bef6d3370": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:e84cb729d3b33540": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:741020cadda0605b": {
+   "field": true,
+   "above": true
+  },
+  "train_data_eng_germany:46f4364280a21980": {
+   "field": null,
+   "above": false
+  },
+  "train_data_eng_germany:73b5ff4406aa4cb4": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:7b4fd5bb98112eb1": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:5467f80db45bee1e": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:8f112348765b1f55": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:16ff2e927c377aa9": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:374bfe6cee3d73d3": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:99262c1d44e22333": {
+   "field": null,
+   "above": true
+  },
+  "train_data_eng_germany:e456056012783b60": {
+   "field": true,
+   "above": false
+  },
+  "train_data_eng_germany:a38555f1ea17979e": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:f17f87e2b85e5789": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:202eb7621e474451": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:e8197f4bbe5c75f4": {
+   "field": null,
+   "above": false
+  },
+  "train_data_eng_germany:2eb833277a155942": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:7a558eed5ead7335": {
+   "field": false,
+   "above": false
+  },
+  "train_data_eng_germany:4906495c89c0ccca": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:bbf703218b46fbac": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:aed16475a0a5154b": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:9a784d5249303204": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:17ec99de5719c1f5": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:bace5e3d79342d7f": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:981e0398b98aea4b": {
+   "field": false,
+   "above": true
+  },
+  "train_data_eng_germany:8354a7fe036b9c1a": {
+   "field": true,
+   "above": false
+  }
+ }
+}

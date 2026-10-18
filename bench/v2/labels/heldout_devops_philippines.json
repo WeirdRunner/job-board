@@ -1,0 +1,705 @@
+{
+ "jobs": {
+  "heldout_devops_philippines:4142686cffded37f": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "heldout_devops_philippines:08ba20da7948dc79": {
+   "tech": false,
+   "field": "backend",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "heldout_devops_philippines:f2b3dea033fe4af1": {
+   "tech": true,
+   "field": "devops_platform",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 4,
+   "relevant": false,
+   "note": "Strong skill match but Dublin/EMEA hybrid"
+  },
+  "heldout_devops_philippines:7d1064a13f1f2d87": {
+   "tech": true,
+   "field": "devops_platform",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 3,
+   "relevant": false
+  },
+  "heldout_devops_philippines:912f986f0c6c8f82": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "heldout_devops_philippines:19a239589d782d94": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 2,
+   "relevant": false,
+   "note": "Technical support role; Japanese required"
+  },
+  "heldout_devops_philippines:8f17a09e0941ac5f": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:0a81cb2fab7d8171": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": null,
+   "location": "remote_open",
+   "eligible": true,
+   "experience": "not_stated",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": true,
+   "note": "Remote 'executed globally' (GMT-GMT+3 only preferred); infra security adjacent to devops"
+  },
+  "heldout_devops_philippines:f522129a8c86d34f": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:0b333f3a42785a68": {
+   "tech": true,
+   "field": "applied_ai_products",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "2_4",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false,
+   "note": "Support-titled but mostly building integrations/LLM workflows"
+  },
+  "heldout_devops_philippines:37f5476aaab30811": {
+   "tech": true,
+   "field": "full_stack",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "heldout_devops_philippines:9606bd725c8d98fc": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": "contract",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": false,
+   "note": "Pre-sales specialist SE; 12-month fixed-term contract"
+  },
+  "heldout_devops_philippines:a34932301695bde7": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:2b210e9049031f82": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "heldout_devops_philippines:616e66b489b5778e": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:ae00fe03a8afc279": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:79d2d3c7215ae687": {
+   "tech": true,
+   "field": "ai_ml_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "ai_ml_engineering vs research: model post-training, no publishing focus"
+  },
+  "heldout_devops_philippines:b4418af823498575": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:9e789122e94cde1d": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:27e36edaaefdebbd": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:6c7997e2fa912b24": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:831019eed8dadf5c": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "entry",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "2_4",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "Title 'Associate' (entry) though 3+ years asked"
+  },
+  "heldout_devops_philippines:c13c3c01e621e8ab": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "entry",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "onsite",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:7d4da53bf33793f6": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:c4e2ecfcd05497c8": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "advanced_degree",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "Law degree (JD) + bar required"
+  },
+  "heldout_devops_philippines:ab774ef02539c5cf": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:63fdd78ea8508fea": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:ab722bc6bfd2979b": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "2_4",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_devops_philippines:8b38912bced3179f": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false,
+   "note": "Says only 'Remote' but USD pay zones/US law notices imply US-only"
+  },
+  "heldout_devops_philippines:2d95bb1b7ee644ff": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "onsite",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  }
+ },
+ "titles": {
+  "heldout_devops_philippines:3cb6093afede997e": {
+   "field": true,
+   "above": true
+  },
+  "heldout_devops_philippines:c89f6c501f0f7804": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:0812f9d33e06ec32": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:fdf31eb6c0e3ea16": {
+   "field": true,
+   "above": false
+  },
+  "heldout_devops_philippines:c66c7d98be1cb059": {
+   "field": true,
+   "above": false
+  },
+  "heldout_devops_philippines:5455101073e4d6d8": {
+   "field": true,
+   "above": false
+  },
+  "heldout_devops_philippines:ca69a1e5ebaf5989": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:d41dcab3c65c8e0f": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:1b4ba4b388d0817b": {
+   "field": true,
+   "above": false
+  },
+  "heldout_devops_philippines:5e985b1eb7ae88b9": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:8cfd6b2a3a57befa": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:1b504850a6896342": {
+   "field": true,
+   "above": true
+  },
+  "heldout_devops_philippines:20103db9e59963a1": {
+   "field": true,
+   "above": true
+  },
+  "heldout_devops_philippines:f389c74e235bf89d": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:40a578bf868d8b5a": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:b8c1553978fdfe5f": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:807ad02d4b220e36": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:c90d8e7e70c56e28": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:f70aa8342f12747d": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:f9b2facfbfab1a23": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:b46f2484578b33db": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:a6b053a2dc417b27": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:6fc183a2a81d49f4": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:9750e12f68fc4259": {
+   "field": null,
+   "above": true
+  },
+  "heldout_devops_philippines:64f9eabc1aa142d1": {
+   "field": true,
+   "above": true
+  },
+  "heldout_devops_philippines:0ab1ed7b30ce16fd": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:a348f0195c4dd97a": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:22dc8d7f2301d6a8": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:b21d724511b42f50": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:0e5b12357acc1755": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:ed409240e14e9213": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:6dba9b1f3d735b32": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:7ed32819a86add9e": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:9a698e561d6a57d5": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:38f0b39106c67a28": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:91394e0a66f7bf15": {
+   "field": true,
+   "above": false
+  },
+  "heldout_devops_philippines:2700a33be1146d67": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:f77b2d09af60ce7e": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:659800fc283eea3d": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:49b2b6909c8d19b9": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:25d66296ce116d47": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:aa05cc9702e18e86": {
+   "field": true,
+   "above": true
+  },
+  "heldout_devops_philippines:e7624520b6959587": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:e6907f46e32e5656": {
+   "field": true,
+   "above": false
+  },
+  "heldout_devops_philippines:438d03add5032f18": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:40dda6ab9479a7df": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:f804630c118b5645": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:27ede27571921efc": {
+   "field": true,
+   "above": true
+  },
+  "heldout_devops_philippines:a53b0540966b3339": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:3020565f6c00de79": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:b1ca31a518490fb3": {
+   "field": false,
+   "above": true
+  },
+  "heldout_devops_philippines:16af49a907e7eeda": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:a5143574d679c3a5": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:1bf5484d16e6dfff": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:e451e683b1cf7737": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:fcde9da064bb4e63": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:527907497cc5fff6": {
+   "field": false,
+   "above": false
+  },
+  "heldout_devops_philippines:c6a1c8794578f9b7": {
+   "field": true,
+   "above": false
+  },
+  "heldout_devops_philippines:3fe95a16bda9d1c0": {
+   "field": true,
+   "above": true
+  },
+  "heldout_devops_philippines:f9ed232348e4a4c2": {
+   "field": false,
+   "above": false
+  }
+ }
+}

@@ -1,0 +1,702 @@
+{
+ "jobs": {
+  "heldout_fullstack_poland:f9f090ac39fbf0cd": {
+   "tech": true,
+   "field": "full_stack",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 3,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:c459ab4175497655": {
+   "tech": true,
+   "field": "frontend",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 3,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:6b38dd591817a9e0": {
+   "tech": true,
+   "field": "full_stack",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "cs_engineering_degree",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 3,
+   "relevant": false,
+   "note": "Lead title -> senior though 10+ yrs; Salesforce/Apex gap with ramp-up offered"
+  },
+  "heldout_fullstack_poland:166fcb0391953f54": {
+   "tech": true,
+   "field": "full_stack",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 3,
+   "relevant": false,
+   "note": "Remote but listed Canada/US only"
+  },
+  "heldout_fullstack_poland:48334224c84ad7b9": {
+   "tech": false,
+   "field": "frontend",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false,
+   "note": "People-management EM; 'Germany | Remote' country-specific listing despite boilerplate pay note"
+  },
+  "heldout_fullstack_poland:a34c06146a9467e7": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:eae24d5e7d55bc36": {
+   "tech": true,
+   "field": "full_stack",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:f8109a0acc603409": {
+   "tech": true,
+   "field": "other_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:9dc8859cfd168c96": {
+   "tech": true,
+   "field": "full_stack",
+   "level": "internship",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "onsite",
+   "employment": "internship",
+   "degree": "cs_engineering_degree",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 3,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:2cc27f4afa5c5f06": {
+   "tech": true,
+   "field": "backend",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:16487c494c802501": {
+   "tech": true,
+   "field": "full_stack",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 3,
+   "relevant": false,
+   "note": "US citizen + clearance required"
+  },
+  "heldout_fullstack_poland:83f5070df5425ab6": {
+   "tech": true,
+   "field": "backend",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "unclear",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 2,
+   "relevant": false,
+   "note": "Untitled level; 5+ yrs -> senior"
+  },
+  "heldout_fullstack_poland:cdbdec391793a427": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "onsite",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:1bd64807b2229e84": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:3f9cf332d9bbe83e": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "entry",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "2_4",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:c8fba8e4566404e0": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:e0cd5477b75aa326": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:c8070c6e0df5e692": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:4a402f4659bb92a9": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "any_degree_or_equivalent",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:95ba518706b79449": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:671bd62b35fa6c37": {
+   "tech": true,
+   "field": "data_science",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "unclear",
+   "employment": null,
+   "degree": "cs_engineering_degree",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 1,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:13db41b29da69e3b": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "staff_plus",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "remote",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:65b8d351b336a993": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "entry",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "0_2",
+   "work_mode": "onsite",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:34cba3a6c4f5d264": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:f38169e82196a835": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 0,
+   "relevant": false,
+   "note": "Beijing seller, 'language proficiency where required' implies Mandarin"
+  },
+  "heldout_fullstack_poland:8bbf67875a8fb2c5": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "mid",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "2_4",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": true,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:7f434789a7c011dc": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:03e545a9186d4bf1": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "7_plus",
+   "work_mode": "hybrid",
+   "employment": null,
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:3833d1cad7ed0571": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": null,
+   "location": "restricted",
+   "eligible": false,
+   "experience": "not_stated",
+   "work_mode": "remote",
+   "employment": null,
+   "degree": "cs_engineering_degree",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  },
+  "heldout_fullstack_poland:6a77440bc0336993": {
+   "tech": false,
+   "field": "non_engineering",
+   "level": "senior",
+   "location": "restricted",
+   "eligible": false,
+   "experience": "4_7",
+   "work_mode": "onsite",
+   "employment": "full_time",
+   "degree": "none_stated",
+   "red_flags": false,
+   "other_language": false,
+   "skill": 0,
+   "relevant": false
+  }
+ },
+ "titles": {
+  "heldout_fullstack_poland:2d2b0bfe527bb322": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:c01c3517dcd73d8a": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:b350b295ea3e82ad": {
+   "field": true,
+   "above": false
+  },
+  "heldout_fullstack_poland:190013938a2112f0": {
+   "field": true,
+   "above": false
+  },
+  "heldout_fullstack_poland:bfc90ff08c6251bf": {
+   "field": true,
+   "above": false
+  },
+  "heldout_fullstack_poland:40d0a71859544ee7": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:f9ea161545730067": {
+   "field": true,
+   "above": true
+  },
+  "heldout_fullstack_poland:08e493f60535581a": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:9ae0ae98328f64cb": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:05b4ba3a019f34ca": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:499f9f13de8ea0e3": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:a25d9d81cbbb7096": {
+   "field": true,
+   "above": false
+  },
+  "heldout_fullstack_poland:9113160975db6af6": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:80f83a7efa6adc55": {
+   "field": true,
+   "above": false
+  },
+  "heldout_fullstack_poland:c03391c7ac3fc87c": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:9a1bb5a6a2f37429": {
+   "field": true,
+   "above": true
+  },
+  "heldout_fullstack_poland:86dad61758ae5196": {
+   "field": true,
+   "above": false
+  },
+  "heldout_fullstack_poland:55e725bf7c270eab": {
+   "field": false,
+   "above": true
+  },
+  "heldout_fullstack_poland:b3cd8c92f9cea611": {
+   "field": false,
+   "above": true
+  },
+  "heldout_fullstack_poland:f0cb083f11b748e6": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:8a8ee6d228179ced": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:25048e8650f6b44f": {
+   "field": false,
+   "above": true
+  },
+  "heldout_fullstack_poland:5a18a04ed47cb9e4": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:a24bc61ae1107214": {
+   "field": false,
+   "above": true
+  },
+  "heldout_fullstack_poland:c2ee5e6a7f1ea800": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:35d2c76fd18ad601": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:adfaca7218101ec9": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:b50aedf0345b7647": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:3f20d8566c55cca6": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:c79125d70321a5cc": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:114ecffd63cd3545": {
+   "field": true,
+   "above": false
+  },
+  "heldout_fullstack_poland:9b15433b8e4859e0": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:cf86db918b584e7c": {
+   "field": false,
+   "above": true
+  },
+  "heldout_fullstack_poland:60c34305213aa821": {
+   "field": false,
+   "above": true
+  },
+  "heldout_fullstack_poland:6652de719e8ece32": {
+   "field": false,
+   "above": true
+  },
+  "heldout_fullstack_poland:060fa7b413d5ef88": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:3301298b9f40de94": {
+   "field": false,
+   "above": true
+  },
+  "heldout_fullstack_poland:97f013a5d521ed72": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:58a344e525b5e7c5": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:b34c2cceb3de6c2c": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:d0e2e85383d5aa0a": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:91235bcf0ee26673": {
+   "field": true,
+   "above": false
+  },
+  "heldout_fullstack_poland:c1cc0e1af40b17f8": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:a2339805262ef968": {
+   "field": true,
+   "above": false
+  },
+  "heldout_fullstack_poland:158a4b88d838b0bf": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:e700492ed0647401": {
+   "field": true,
+   "above": true
+  },
+  "heldout_fullstack_poland:506b5efa2e92a68f": {
+   "field": true,
+   "above": false
+  },
+  "heldout_fullstack_poland:88c47314d45b6445": {
+   "field": false,
+   "above": true
+  },
+  "heldout_fullstack_poland:6ec7cf3cefe34662": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:332bf4daf73751a8": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:e101bfcbbec63b21": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:fba92a7d3fa5a787": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:74012e006b8215d7": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:514d150fc66713a8": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:0701bae26b475e79": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:8032e3be30e20d6d": {
+   "field": true,
+   "above": false
+  },
+  "heldout_fullstack_poland:b3d77fa3d236792c": {
+   "field": false,
+   "above": false
+  },
+  "heldout_fullstack_poland:b4c32d1bca94de45": {
+   "field": true,
+   "above": false
+  },
+  "heldout_fullstack_poland:b8310e310d9a81fa": {
+   "field": true,
+   "above": false
+  },
+  "heldout_fullstack_poland:ef2330091d2d741d": {
+   "field": false,
+   "above": false
+  }
+ }
+}

@@ -1,7 +1,7 @@
 """Which language a posting is written in — a small stopword count, no model or dependency needed.
 
 A posting written in German almost always wants German speakers, so this backs a hard gate against the
-languages on your profile (see pipeline.score_answers). English + the common European job-board languages.
+languages on your profile (see scoring.score_answers). English + the common European job-board languages.
 """
 from __future__ import annotations
 

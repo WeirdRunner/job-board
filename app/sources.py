@@ -12,6 +12,7 @@ from __future__ import annotations
 import hashlib
 import html
 import re
+import sys
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -260,14 +261,21 @@ def hackernews(s, terms, companies, log):
 # Company applicant-tracking boards (Greenhouse / Ashby / Lever)
 # ---------------------------------------------------------------------------
 
+def pmap(fn, items, workers: int) -> list:
+    """map() across a thread pool; one item at a time in the browser (Pyodide has no threads)."""
+    if sys.platform == "emscripten":
+        return list(map(fn, items))
+    with ThreadPoolExecutor(workers) as ex:
+        return list(ex.map(fn, items))
+
+
 def _per_company(fn, companies, log):
     out = []
-    with ThreadPoolExecutor(8) as ex:
-        for co, res in zip(companies, ex.map(lambda c: _safe(fn, c), companies)):
-            if isinstance(res, Exception):
-                log(f"  {fn.__name__}:{co} failed: {res}")
-            else:
-                out.extend(res)
+    for co, res in zip(companies, pmap(lambda c: _safe(fn, c), companies, 8)):
+        if isinstance(res, Exception):
+            log(f"  {fn.__name__}:{co} failed: {res}")
+        else:
+            out.extend(res)
     return out
 
 
@@ -458,13 +466,14 @@ def fetch_all(enabled: List[str], terms: List[str], companies: Dict[str, List[st
         except Exception as e:
             return name, e
 
-    with ThreadPoolExecutor(6) as ex:
-        for name, res in ex.map(run, [n for n in enabled if n in SOURCES]):
-            if isinstance(res, Exception):
-                log(f"✗ {name}: {res}")
-            else:
-                log(f"✓ {name}: {len(res)} postings")
-                jobs.extend(res)
+    names = [n for n in enabled if n in SOURCES]
+    results = pmap(run, names, 6)
+    for name, res in results:
+        if isinstance(res, Exception):
+            log(f"✗ {name}: {res}")
+        else:
+            log(f"✓ {name}: {len(res)} postings")
+            jobs.extend(res)
     for j in jobs:      # a freelance posting on a job board is a gig too
         if j.get("kind") != "gig" and FREELANCE.search(f"{j.get('employment_type', '')} {j.get('title', '')}"):
             j["kind"] = "gig"
