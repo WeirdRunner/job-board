@@ -720,3 +720,8 @@ details.gut .evidence { margin-bottom: 14px; }
               font-size: 13px; cursor: pointer; }
 .chip-check:has(input:checked) { border-color: var(--accent); background: var(--info-bg); }
 .chip-check input { accent-color: var(--accent); margin: 0; }
+.disclaimer { margin: 16px 0 6px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px;
+              background: var(--surface-2); font-size: 13px; color: var(--muted); }
+.disclaimer b { color: var(--text); }
+.disclaimer ul { margin: 6px 0 0; padding-left: 18px; }
+.disclaimer li { margin: 5px 0; }

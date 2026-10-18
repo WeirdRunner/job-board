@@ -87,6 +87,22 @@ window.Local = (() => {
           </label>
         </div>
         <p class="faint" id="ob-msg" aria-live="polite"></p>
+        <div class="disclaimer">
+          <b>Before you start</b>
+          <ul>
+            <li><b>It's an experiment.</b> A free side project, not a recruiting service. It doesn't apply anywhere or contact
+              anyone for you, and it can't promise you interviews.</li>
+            <li><b>The AI can be wrong.</b> It reads each posting and guesses fit, level, location and pay. Always check the
+              original posting before you apply.</li>
+            <li><b>Your data stays in this browser.</b> Your resume, swipes and tracker are saved only here. Nobody, including
+              the author, can see them, and nothing is sent anywhere except requests to public job boards to fetch postings.
+              Clearing this site's data deletes it, so download a backup now and then (Settings).</li>
+            <li><b>It needs a one-time download and some patience.</b> The AI model (~620 MB) downloads on the first search
+              and is reused after that. A search takes 10–25 minutes; keep this tab open. Works best in Chrome or Edge on a
+              laptop or desktop; phones may be slow.</li>
+            <li><b>Postings belong to the job boards.</b> Every job links to its original listing.</li>
+          </ul>
+        </div>
         ${opts.unlockHref ? `<p class="faint">Is this your board? <a href="${opts.unlockHref}">Unlock it</a></p>` : ""}
         <details class="faint"><summary>Already have a board on GitHub?</summary>
           <p>Open it at <code>https://&lt;you&gt;.github.io/&lt;repo&gt;/</code>, or <a href="setup.html">set one up</a> — it searches
@@ -128,6 +144,8 @@ window.Local = (() => {
               `<label class="chip-check" title="${esc(v)}"><input type="checkbox" value="${k}" ${picked.has(k) ? "checked" : ""}>${esc(FIELD_SHORT[k] || k)}</label>`).join("")}</div></div>
           <div class="field-row"><label>Your top skills <span class="faint">(up to 10)</span></label><div class="chips" id="ob-skills">
             ${skills.slice(0, 30).map((s, i) => `<label class="chip-check"><input type="checkbox" value="${esc(s)}" ${i < 10 ? "checked" : ""}>${esc(s)}</label>`).join("")}</div></div>
+          <p class="faint small">Next: the AI model downloads once (~620 MB), then the board reads today's postings —
+            10–25 minutes. Jobs appear as they're read; keep this tab open.</p>
           <button class="btn primary">Find my jobs</button>
         </form>`;
       msg("");
