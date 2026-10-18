@@ -90,8 +90,8 @@ window.Local = (() => {
         <div class="disclaimer">
           <b>Before you start</b>
           <ul>
-            <li><b>It's an experiment.</b> A free side project, not a recruiting service. It doesn't apply anywhere or contact
-              anyone for you, and it can't promise you interviews.</li>
+            <li><b>What it does — and doesn't.</b> It finds and ranks jobs for you. It never applies anywhere or contacts
+              anyone on your behalf, and it can't guarantee interviews.</li>
             <li><b>The AI can be wrong.</b> It reads each posting and guesses fit, level, location and pay. Always check the
               original posting before you apply.</li>
             <li><b>Your data stays in this browser.</b> Your resume, swipes and tracker are saved only here. Nobody, including

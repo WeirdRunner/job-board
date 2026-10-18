@@ -51,7 +51,8 @@ h1, h2, h3 { margin: 0; line-height: 1.2; letter-spacing: -.01em; }
   backdrop-filter: blur(12px); border-bottom: 1px solid var(--line);
 }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.01em; }
-.logo { width: 26px; height: 26px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #9b6bff); }
+.logo { width: 26px; height: 26px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #9b6bff); display: grid; }
+.logo svg { width: 100%; height: 100%; }   /* a dreamcatcher: the web catches the good jobs */
 .tabs { display: flex; gap: 4px; margin: 0 auto; background: var(--surface); border: 1px solid var(--line); padding: 4px; border-radius: 14px; }
 .tabs a { position: relative; display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 10px; color: var(--muted); font-weight: 600; font-size: 14px; }
 .tabs a svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
