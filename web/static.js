@@ -192,19 +192,193 @@
       return x.host.replace(/^www\./, "") + x.pathname.replace(/\/+$/, "") + (q.length ? "?" + new URLSearchParams(q) : "");
     } catch (_) { return String(u || "").toLowerCase(); }
   }
-  const ATS = [[/(?:job-)?boards(?:-api)?\.greenhouse\.io\/([^/]+)/, "greenhouse"], [/jobs\.(?:eu\.)?lever\.co\/([^/]+)/, "lever"],
-    [/jobs\.ashbyhq\.com\/([^/]+)/, "ashby"], [/apply\.workable\.com\/([^/]+)/, "workable"], [/jobs\.smartrecruiters\.com\/([^/]+)/, "smartrecruiters"],
-    [/jobs\.polymer\.co\/([^/]+)/, "polymer"], [/([^./]+)\.zohorecruit\.(?:com|in)/, "zoho"], [/([^./]+)\.bamboohr\.com/, "bamboohr"],
-    [/([^./]+)\.wd\d+\.myworkdayjobs\.com/, "workday"], [/([^./]+)\.breezy\.hr/, "breezy"], [/([^./]+)\.eightfold\.ai/, "eightfold"]];
+  const ATS = [
+    [/(?:job-)?boards(?:-api)?\.greenhouse\.io\/([^/]+)/, "greenhouse"],
+    [/jobs\.(?:eu\.)?lever\.co\/([^/]+)/, "lever"],
+    [/jobs\.ashbyhq\.com\/([^/]+)/, "ashby"],
+    [/apply\.workable\.com\/([^/]+)/, "workable"],
+    [/jobs\.smartrecruiters\.com\/([^/]+)/, "smartrecruiters"],
+    [/jobs\.polymer\.co\/([^/]+)/, "polymer"],
+    [/([^./]+)\.zohorecruit\.(?:com|in)/, "zoho"],
+    [/([^./]+)\.bamboohr\.com/, "bamboohr"],
+    [/([^./]+)\.wd\d+\.myworkdayjobs\.com/, "workday"],
+    [/([^./]+)\.breezy\.hr/, "breezy"],
+    [/([^./]+)\.eightfold\.ai/, "eightfold"],
+    [/([^./]+)\.recruitee\.com/, "recruitee"],
+    [/([^./]+)\.teamtailor\.com/, "teamtailor"]
+  ];
+  const KNOWN_COMPANIES = [
+    [/google\./i, "Google"],
+    [/microsoft\./i, "Microsoft"],
+    [/apple\./i, "Apple"],
+    [/amazon\./i, "Amazon"],
+    [/(meta|metacareers)\./i, "Meta"],
+    [/netflix\./i, "Netflix"],
+    [/spotify\./i, "Spotify"],
+    [/uber\./i, "Uber"],
+    [/airbnb\./i, "Airbnb"],
+    [/stripe\./i, "Stripe"],
+    [/salesforce\./i, "Salesforce"],
+    [/adobe\./i, "Adobe"],
+    [/intel\./i, "Intel"],
+    [/nvidia\./i, "Nvidia"],
+    [/oracle\./i, "Oracle"],
+    [/cisco\./i, "Cisco"],
+    [/ibm\./i, "IBM"],
+    [/palantir\./i, "Palantir"],
+    [/bloomberg\./i, "Bloomberg"]
+  ];
+  const AGGREGATORS = new Set([
+    "linkedin.com", "indeed.com", "glassdoor.com", "ziprecruiter.com", "monster.com",
+    "remotive.com", "himalayas.app", "jobicy.com", "weworkremotely.com", "arbeitnow.com",
+    "ycombinator.com", "github.io", "github.com", "notion.site", "notion.so", "vercel.app"
+  ]);
+  const ROLE_RE = /\b(engineer\w*|engg|developer|dev|intern(ship)?|scientist|analyst|manager|designer|lead|architect|specialist|associate|researcher|sde|consultant|programmer|administrator|devops|sre|writer|recruiter|executive|officer|director|head|fellow|trainee|technician|advocate)\b/i;
+  const CAREERS_RE = /^(careers?|jobs?|job board|hiring|(current |job )?open(ing|ings| positions)|join us|apply|review)$/i;
+  const ACRONYMS = { ai: "AI", ml: "ML", sde: "SDE", qa: "QA", ui: "UI", ux: "UX", aws: "AWS", gcp: "GCP", ii: "II", iii: "III", iv: "IV" };
+
+  function prettyName(s) {
+    return (s || "").replace(/[-_]+/g, " ").replace(/\b\w+/g, (w) => ACRONYMS[w.toLowerCase()] || (w[0].toUpperCase() + w.slice(1).toLowerCase())).trim();
+  }
+
+  function parseRoleSlug(slug) {
+    if (!slug) return null;
+    let s = slug.replace(/^([0-9a-f]{6,}|[0-9]+)[-_]+/i, "").replace(/[-_]+([0-9a-f]{6,}|[0-9]+)$/i, "");
+    s = s.replace(/--+/g, " - ");
+    if (!ROLE_RE.test(s)) return null;
+    return prettyName(s);
+  }
+
+  function parseTitle(title, company) {
+    let t = (title || "").trim();
+    t = t.replace(/^(review|job application for|apply for|careers?:?)\s*[–—:-]\s*/i, "");
+    t = t.replace(/^(job application for|apply for|careers?:?)\s+/i, "");
+    let role = null, co = null, location = null;
+    const atMatch = t.match(/^(.+?)\s+(?:at|@)\s+(.+)$/i);
+    if (atMatch) {
+      role = atMatch[1];
+      co = atMatch[2];
+    } else {
+      let bits = t.split(/\s+[|–—-]\s+/).map((b) => b.trim()).filter(Boolean);
+      bits = bits.map((b) => b.replace(/\s+(careers?|jobs?)$/i, "").trim()).filter((b) => b && !CAREERS_RE.test(b));
+      if (bits.length === 1) {
+        if (ROLE_RE.test(bits[0])) role = bits[0];
+        else co = co || bits[0];
+      } else if (bits.length > 1) {
+        const roley = bits.filter((b) => ROLE_RE.test(b));
+        role = roley[0] || null;
+        const others = bits.filter((b) => b !== role);
+        const hint = others.find((b) => company && b.toLowerCase() === company.toLowerCase());
+        co = hint || others[0] || null;
+      }
+    }
+    if (role) {
+      const locMatch = role.match(/^(.+?)\s+in\s+([A-Z][\w .,-]+)$/);
+      if (locMatch && !ROLE_RE.test(locMatch[2])) {
+        role = locMatch[1];
+        location = locMatch[2];
+      }
+    }
+    if (role && (role.length > 120 || CAREERS_RE.test(role))) {
+      role = null;
+    }
+    return { role: role ? role.trim() : null, company: co ? co.trim() : (company || null), location: location ? location.trim() : null };
+  }
+
   function fromUrl(u) {
     try {
-      const x = new URL(u), hp = x.host.toLowerCase() + x.pathname;
-      for (const [re, source] of ATS) {
-        const m = hp.match(re);
-        if (m) return { company: m[1].replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()), source };
+      const x = new URL(u);
+      const hp = x.host.toLowerCase() + x.pathname;
+      let company = null, source = "manual", role = null, location = null;
+
+      const liMatch = x.pathname.match(/\/jobs\/view\/([^/]+)-at-([^/]+)-\d+/i);
+      if (liMatch) {
+        role = parseRoleSlug(liMatch[1]);
+        company = prettyName(liMatch[2]);
+        source = "linkedin";
       }
-      return { company: null, source: x.host.replace(/^(www|jobs|careers|apply)\./, "") };
-    } catch (_) { return { company: null, source: "manual" }; }
+
+      if (!company) {
+        const wdMatch = hp.match(/([^./]+)\.wd\d+\.myworkdayjobs\.com.*\/job\/([^/]+)\/([^/]+)/i);
+        if (wdMatch) {
+          company = prettyName(wdMatch[1]);
+          location = prettyName(wdMatch[2].replace(/-/g, ", "));
+          role = parseRoleSlug(wdMatch[3]);
+          source = "workday";
+        }
+      }
+
+      if (!company) {
+        for (const [re, src] of ATS) {
+          const m = hp.match(re);
+          if (m) {
+            company = prettyName(m[1]);
+            source = src;
+            break;
+          }
+        }
+      }
+
+      if (!company) {
+        for (const [re, name] of KNOWN_COMPANIES) {
+          if (re.test(x.host.toLowerCase())) {
+            company = name;
+            source = x.host.replace(/^www\./, "");
+            break;
+          }
+        }
+      }
+
+      if (!company) {
+        const cleanHost = x.host.toLowerCase().replace(/^(www|jobs|careers|apply|jobsearch|boards)\./, "");
+        source = cleanHost || "manual";
+        if (cleanHost.includes("ycombinator.com")) {
+          source = "hackernews";
+        } else if (![...AGGREGATORS].some((agg) => cleanHost.endsWith(agg))) {
+          const domainParts = cleanHost.split(".");
+          if (domainParts.length >= 2) company = prettyName(domainParts[0]);
+        }
+      }
+
+      if (!role) {
+        const pathParts = x.pathname.split("/").filter(Boolean);
+        for (let i = pathParts.length - 1; i >= 0; i--) {
+          const r = parseRoleSlug(pathParts[i]);
+          if (r) {
+            role = r;
+            break;
+          }
+        }
+      }
+
+      return { company, role, location, source };
+    } catch (_) {
+      return { company: null, role: null, location: null, source: "manual" };
+    }
+  }
+
+  function findBoardJob(u) {
+    if (!u || !S.board?.jobs?.length) return null;
+    const nu = normUrl(u);
+    let j = S.board.jobs.find((x) => normUrl(x.url) === nu);
+    if (j) return j;
+    const stripSuffix = (s) => s.replace(/(\/(apply|job|review)|#.*|\?.*)+$/i, "").replace(/\/+$/, "");
+    const baseNu = stripSuffix(nu);
+    j = S.board.jobs.find((x) => {
+      const xNu = stripSuffix(normUrl(x.url));
+      return xNu && baseNu && (xNu === baseNu || xNu.startsWith(baseNu) || baseNu.startsWith(xNu));
+    });
+    if (j) return j;
+    const extractIds = (s) => (String(s).match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|\b\d{5,}\b/gi) || []);
+    const uIds = new Set(extractIds(u));
+    if (uIds.size) {
+      j = S.board.jobs.find((x) => {
+        const xIds = extractIds(x.url);
+        return xIds.some((id) => uIds.has(id));
+      });
+      if (j) return j;
+    }
+    return null;
   }
 
   // -- resume: source in user.enc, PDF in resume_pdf.enc -------------------------------------------------
@@ -401,7 +575,7 @@
       for (const k of APP_FIELDS) row[k] = body[k] ?? null;
       row.status ||= "Applied";
       row.applied_on ||= today();
-      const job = row.url && (S.board?.jobs || []).find((j) => normUrl(j.url) === normUrl(row.url));
+      const job = row.url && findBoardJob(row.url);
       if (job) {
         row.job_id = job.id; row.match ??= job.match; row.kind ??= job.kind || "job";
         // Reaching out before applying ("Saved") leaves the job in your deck; swiping right later marks it applied.
@@ -413,9 +587,28 @@
     }
     if (p === "/api/applications/lookup") {
       const url = q.get("url");
-      const job = (S.board?.jobs || []).find((j) => normUrl(j.url) === normUrl(url));
+      const job = findBoardJob(url);
       if (job) return { company: job.company, role: job.title, location: job.location, source: job.source, match: job.match, from: "board" };
-      return { ...fromUrl(url), role: null, location: null, match: null, from: "url" };
+      const parsed = fromUrl(url);
+      if (!parsed.role) {
+        try {
+          const res = await fetch(url, { mode: "cors", signal: AbortSignal.timeout(2000) });
+          if (res.ok) {
+            const html = await res.text();
+            const doc = new DOMParser().parseFromString(html.slice(0, 300000), "text/html");
+            const ogTitle = doc.querySelector('meta[property="og:title"], meta[name="og:title"]')?.getAttribute("content");
+            const pageTitle = ogTitle || doc.title;
+            if (pageTitle) {
+              const tp = parseTitle(pageTitle, parsed.company);
+              if (tp.role) parsed.role = tp.role;
+              if (tp.company && !parsed.company) parsed.company = tp.company;
+              if (tp.location && !parsed.location) parsed.location = tp.location;
+              if (parsed.role) return { ...parsed, match: null, from: "page" };
+            }
+          }
+        } catch (_) {}
+      }
+      return { ...parsed, match: null, from: "url" };
     }
     if ((m = p.match(/^\/api\/applications\/([^/]+)$/))) {
       const uid = decodeURIComponent(m[1]);
@@ -431,7 +624,7 @@
       row.updated_at = nowIso();
       let linked = null;
       if ("url" in body) {
-        const job = row.url && (S.board?.jobs || []).find((j) => normUrl(j.url) === normUrl(row.url));
+        const job = row.url && findBoardJob(row.url);
         row.job_id = job ? job.id : null;
         if (job) { S.user.decisions[job.id] = { status: "applied", at: nowIso() }; linked = { title: job.title, company: job.company }; }
       }

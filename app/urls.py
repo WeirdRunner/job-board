@@ -38,22 +38,120 @@ _ATS = [
 ]
 
 
+_ROLE_WORDS = re.compile(
+    r"\b(engineer\w*|engg|developer|dev|intern(ship)?|scientist|analyst|manager|designer|lead|architect|"
+    r"specialist|associate|researcher|sde|consultant|programmer|administrator|devops|sre|writer|recruiter|"
+    r"executive|officer|director|head|fellow|trainee|technician|advocate)\b", re.I)
+_CAREERS = re.compile(r"^(careers?|jobs?|job board|hiring|(current |job )?open(ing|ings| positions)|join us|apply|review)$", re.I)
+_KNOWN_COMPANIES = [
+    (re.compile(r"(^|\.)google\.", re.I), "Google"),
+    (re.compile(r"(^|\.)microsoft\.", re.I), "Microsoft"),
+    (re.compile(r"(^|\.)apple\.", re.I), "Apple"),
+    (re.compile(r"(^|\.)amazon\.", re.I), "Amazon"),
+    (re.compile(r"(^|\.)(meta|metacareers)\.", re.I), "Meta"),
+    (re.compile(r"(^|\.)netflix\.", re.I), "Netflix"),
+    (re.compile(r"(^|\.)spotify\.", re.I), "Spotify"),
+    (re.compile(r"(^|\.)uber\.", re.I), "Uber"),
+    (re.compile(r"(^|\.)airbnb\.", re.I), "Airbnb"),
+    (re.compile(r"(^|\.)stripe\.", re.I), "Stripe"),
+    (re.compile(r"(^|\.)salesforce\.", re.I), "Salesforce"),
+    (re.compile(r"(^|\.)adobe\.", re.I), "Adobe"),
+    (re.compile(r"(^|\.)intel\.", re.I), "Intel"),
+    (re.compile(r"(^|\.)nvidia\.", re.I), "Nvidia"),
+    (re.compile(r"(^|\.)oracle\.", re.I), "Oracle"),
+    (re.compile(r"(^|\.)cisco\.", re.I), "Cisco"),
+    (re.compile(r"(^|\.)ibm\.", re.I), "IBM"),
+    (re.compile(r"(^|\.)palantir\.", re.I), "Palantir"),
+    (re.compile(r"(^|\.)bloomberg\.", re.I), "Bloomberg"),
+]
+_AGGREGATORS = {
+    "linkedin.com", "indeed.com", "glassdoor.com", "ziprecruiter.com", "monster.com",
+    "remotive.com", "himalayas.app", "jobicy.com", "weworkremotely.com", "arbeitnow.com",
+    "ycombinator.com", "github.io", "github.com", "notion.site", "notion.so", "vercel.app"
+}
+_ACRONYMS = {"ai": "AI", "ml": "ML", "sde": "SDE", "qa": "QA", "ui": "UI", "ux": "UX", "aws": "AWS", "gcp": "GCP", "ii": "II", "iii": "III", "iv": "IV"}
+
+
 def _pretty(slug: str) -> str:
-    return re.sub(r"[-_]+", " ", slug).strip().title()
+    words = [w for w in re.split(r"[-_]+", slug) if w]
+    return " ".join(_ACRONYMS.get(w.lower(), w.title()) for w in words).strip()
 
 
-def from_url(url: str) -> Dict[str, Optional[str]]:
-    """Company + source from the URL alone (no network)."""
+def _clean_role_slug(slug: str) -> Optional[str]:
+    if not slug:
+        return None
+    s = re.sub(r"^([0-9a-f]{6,}|[0-9]+)[-_]+", "", slug, flags=re.I)
+    s = re.sub(r"[-_]+([0-9a-f]{6,}|[0-9]+)$", "", s, flags=re.I)
+    s = re.sub(r"--+", " - ", s)
+    if not _ROLE_WORDS.search(s):
+        return None
+    return _pretty(s)
+
+
+def from_url(url: str, full: bool = False) -> Dict[str, Optional[str]]:
+    """Company + source (and optionally role + location) from the URL alone (no network)."""
     parts = urlsplit(url.strip())
     hp = parts.netloc.lower() + parts.path
-    for pat, source in _ATS:
-        m = re.search(pat, hp)
-        if m:
-            return {"company": _pretty(m.group(1)), "source": source}
-    host = re.sub(r"^(www|jobs|careers|apply)\.", "", parts.netloc.lower())
-    if "ycombinator.com" in host:
-        return {"company": None, "source": "hackernews"}
-    return {"company": None, "source": host or None}
+    company = None
+    source = "manual"
+    role = None
+    location = None
+
+    # LinkedIn view
+    m_li = re.search(r"/jobs/view/([^/]+)-at-([^/]+)-\d+", parts.path, flags=re.I)
+    if m_li:
+        role = _clean_role_slug(m_li.group(1))
+        company = _pretty(m_li.group(2))
+        source = "linkedin"
+
+    # Workday
+    if not company:
+        m_wd = re.search(r"([^./]+)\.wd\d+\.myworkdayjobs\.com.*\/job\/([^/]+)\/([^/]+)", hp)
+        if m_wd:
+            company = _pretty(m_wd.group(1))
+            location = _pretty(m_wd.group(2).replace("-", ", "))
+            role = _clean_role_slug(m_wd.group(3))
+            source = "workday"
+
+    # ATS patterns
+    if not company:
+        for pat, src in _ATS:
+            m = re.search(pat, hp)
+            if m:
+                company = _pretty(m.group(1))
+                source = src
+                break
+
+    # Known companies
+    if not company:
+        for pat, name in _KNOWN_COMPANIES:
+            if pat.search(parts.netloc):
+                company = name
+                source = re.sub(r"^www\.", "", parts.netloc.lower())
+                break
+
+    # Direct company domains (careers.example.com, example.ai)
+    if not company:
+        host = re.sub(r"^(www|jobs|careers|apply|jobsearch|boards)\.", "", parts.netloc.lower())
+        source = host or "manual"
+        if "ycombinator.com" in host:
+            source = "hackernews"
+        elif not any(host.endswith(agg) for agg in _AGGREGATORS):
+            domain_parts = host.split(".")
+            if len(domain_parts) >= 2:
+                company = _pretty(domain_parts[0])
+
+    # Extract role slug from path if not already found
+    if not role:
+        for p in reversed([seg for seg in parts.path.split("/") if seg]):
+            r = _clean_role_slug(p)
+            if r:
+                role = r
+                break
+
+    if full:
+        return {"company": company, "source": source, "role": role, "location": location}
+    return {"company": company, "source": source}
 
 
 def from_page(url: str, company: Optional[str]) -> Dict[str, Optional[str]]:
@@ -77,17 +175,11 @@ def from_page(url: str, company: Optional[str]) -> Dict[str, Optional[str]]:
     return {**best, "company": named or best["company"]}
 
 
-_ROLE_WORDS = re.compile(
-    r"\b(engineer\w*|engg|developer|dev|intern(ship)?|scientist|analyst|manager|designer|lead|architect|"
-    r"specialist|associate|researcher|sde|consultant|programmer|administrator|devops|sre|writer|recruiter|"
-    r"executive|officer|director|head|fellow|trainee|technician|advocate)\b", re.I)
-_CAREERS = re.compile(r"^(careers?|jobs?|job board|hiring|(current |job )?open(ing|ings| positions)|join us|apply)$", re.I)
-
-
 def parse_title(title: str, site: str = "", company: Optional[str] = None) -> Dict[str, Optional[str]]:
     """Split a posting page title into role / company / location. Handles "Role at Company",
     "Role @ Company", "Company - Role", "Role | Company Careers" and a trailing " in <City>"."""
-    t = re.sub(r"^(job application for|apply for|careers?:?)\s+", "", (title or "").strip(), flags=re.I)
+    t = re.sub(r"^(review|job application for|apply for|careers?:?)\s*[–—:-]\s*", "", (title or "").strip(), flags=re.I)
+    t = re.sub(r"^(job application for|apply for|careers?:?)\s+", "", t.strip(), flags=re.I)
     role = co = None
     m = re.match(r"(.+?)\s+(?:at|@)\s+(.+)$", t)
     if m:
@@ -97,10 +189,13 @@ def parse_title(title: str, site: str = "", company: Optional[str] = None) -> Di
                 for b in re.split(r"\s+[|–—-]\s+", t) if b.strip()]
         bits = [b for b in bits if b and not _CAREERS.match(b)]
         if len(bits) == 1:
-            role = bits[0]
+            if _ROLE_WORDS.search(bits[0]):
+                role = bits[0]
+            else:
+                co = bits[0]
         elif bits:
             roley = [b for b in bits if _ROLE_WORDS.search(b)]
-            role = roley[0] if roley else bits[0]
+            role = roley[0] if roley else None
             others = [b for b in bits if b != role]
             hint = [b for b in others if company and b.lower() == company.lower()]
             co = (hint or others or [None])[0]

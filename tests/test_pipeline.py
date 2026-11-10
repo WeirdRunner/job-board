@@ -114,6 +114,11 @@ def test_link_helpers(tmp_path):
     from app.urls import from_url, parse_title
     assert from_url("https://job-boards.greenhouse.io/sigmoid/jobs/1") == {"company": "Sigmoid", "source": "greenhouse"}
     assert from_url("https://civicdatalab.zohorecruit.in/jobs/Careers/4")["company"] == "Civicdatalab"
+    assert from_url("https://www.google.com/about/careers/applications/apply/34e4d863-9e7b-47b8-8b3f-8c052b9cf0c6/")["company"] == "Google"
+    g_full = from_url("https://www.google.com/about/careers/applications/jobs/results/123456-machine-learning-engineer", full=True)
+    assert g_full["company"] == "Google" and g_full["role"] == "Machine Learning Engineer"
+    wd_full = from_url("https://kla.wd1.myworkdayjobs.com/search/job/Chennai-India/Software-Engineer--Full-Stack-_2636690", full=True)
+    assert wd_full["company"] == "Kla" and "Chennai" in wd_full["location"] and "Software Engineer" in wd_full["role"]
     pt = lambda *a, **k: {k2: v for k2, v in parse_title(*a, **k).items() if v}
     # Real titles seen on Greenhouse, Ashby, Lever and Zoho pages:
     assert pt("Job Application for Full Stack SDE II at Sigmoid") == {"role": "Full Stack SDE II", "company": "Sigmoid"}
@@ -130,6 +135,7 @@ def test_link_helpers(tmp_path):
                url="https://job-boards.greenhouse.io/acme/jobs/1", posted_at=None)
     db.insert_raw([job])
     assert db.find_job_by_url("http://job-boards.greenhouse.io/acme/jobs/1/?utm_source=x")["id"] == "j1"
+    assert db.find_job_by_url("https://job-boards.greenhouse.io/acme/jobs/1/apply")["id"] == "j1"
     assert db.find_job_by_url("https://job-boards.greenhouse.io/acme/jobs/2") is None
 
 

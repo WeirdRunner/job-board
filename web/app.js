@@ -1331,10 +1331,43 @@ async function renderTracker() {
       for (const k of ["company", "role", "location"]) if (d[k] && !form[k].value) form[k].value = d[k];
       form.dataset.source = d.source || "";
       form.dataset.match = d.match ?? "";
-      $("#t-hint").textContent = { board: "✓ Matched a job from your board", page: "Filled from the page — check it",
-        url: "Company filled from the link; add the role" }[d.from] || "";
+      if (d.from === "board") {
+        $("#t-hint").textContent = "✓ Matched a job from your board";
+      } else if (d.company && d.role) {
+        $("#t-hint").textContent = "✓ Filled company & role from the link — check details";
+      } else if (d.company) {
+        $("#t-hint").textContent = `✓ Filled company (${d.company}) from the link — add the role`;
+        if (!form.role.value) form.role.focus();
+      } else if (d.role) {
+        $("#t-hint").textContent = "✓ Filled role from the link — add the company";
+        if (!form.company.value) form.company.focus();
+      } else {
+        $("#t-hint").textContent = "Couldn't read details from this link — fill them in";
+      }
     } catch (_) { $("#t-hint").textContent = "Couldn't read that page — fill in the details"; }
   };
+  form.role.addEventListener("change", () => {
+    const val = form.role.value.trim();
+    if (!val) return;
+    const roleRe = /\b(engineer\w*|engg|developer|dev|intern(ship)?|scientist|analyst|manager|designer|lead|architect|specialist|associate|researcher|sde|consultant|programmer|administrator|devops|sre|writer|recruiter|executive|officer|director|head|fellow|trainee|technician|advocate)\b/i;
+    let t = val.replace(/^(review|job application for|apply for|careers?:?)\s*[–—:-]\s*/i, "").replace(/^(job application for|apply for|careers?:?)\s+/i, "");
+    let r = null, co = null;
+    const atM = t.match(/^(.+?)\s+(?:at|@)\s+(.+)$/i);
+    if (atM) { r = atM[1]; co = atM[2]; }
+    else {
+      let bits = t.split(/\s+[|–—-]\s+/).map((b) => b.trim()).filter(Boolean);
+      bits = bits.map((b) => b.replace(/\s+(careers?|jobs?)$/i, "").trim()).filter((b) => b && !/^(careers?|jobs?|job board|hiring|openings?|positions?|join us|apply|review)$/i.test(b));
+      if (bits.length === 1 && roleRe.test(bits[0])) r = bits[0];
+      else if (bits.length > 1) {
+        const roley = bits.filter((b) => roleRe.test(b));
+        r = roley[0] || null;
+        const others = bits.filter((b) => b !== r);
+        co = others[0] || null;
+      }
+    }
+    if (r && r !== val) form.role.value = r;
+    if (co && !form.company.value) form.company.value = co;
+  });
   form.url.addEventListener("input", () => { clearTimeout(lookupTimer); lookupTimer = setTimeout(lookup, 500); });
   form.url.addEventListener("change", lookup);
   form.onsubmit = async (e) => {

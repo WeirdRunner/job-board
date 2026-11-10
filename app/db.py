@@ -5,6 +5,7 @@ import csv
 import io
 import json
 import os
+import re
 import sqlite3
 import threading
 import uuid
@@ -218,7 +219,22 @@ class DB:
         with self.lock:
             rows = self.conn.execute("SELECT id, url FROM jobs WHERE url IS NOT NULL").fetchall()
         hit = next((r["id"] for r in rows if norm_url(r["url"]) == key), None)
-        return self.job(hit) if hit else None
+        if hit:
+            return self.job(hit)
+        def _strip(s: str) -> str:
+            return re.sub(r"(\/(apply|job|review)|#.*|\?.*)+$", "", s, flags=re.I).rstrip("/")
+        base_key = _strip(key)
+        for r in rows:
+            r_key = _strip(norm_url(r["url"]))
+            if r_key and base_key and (r_key == base_key or r_key.startswith(base_key) or base_key.startswith(r_key)):
+                return self.job(r["id"])
+        u_ids = set(re.findall(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|\b\d{5,}\b", url, flags=re.I))
+        if u_ids:
+            for r in rows:
+                r_ids = set(re.findall(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|\b\d{5,}\b", r["url"], flags=re.I))
+                if u_ids & r_ids:
+                    return self.job(r["id"])
+        return None
 
     def status_counts(self) -> Dict[str, int]:
         with self.lock:

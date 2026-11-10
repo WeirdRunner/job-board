@@ -603,10 +603,13 @@ def lookup_application(url: str):
         d = job["data"]
         return {"company": d["company"], "role": d["title"], "location": d["location"], "source": d["source"],
                 "match": job["match"], "from": "board"}
-    guess = from_url(url)
-    page = from_page(url, guess["company"])
-    return {"company": page.get("company") or guess["company"], "role": page.get("role"), "location": page.get("location"),
-            "source": guess["source"], "match": None, "from": "page" if page.get("role") else "url"}
+    guess = from_url(url, full=True)
+    page = from_page(url, guess.get("company"))
+    company = page.get("company") or guess.get("company")
+    role = page.get("role") or guess.get("role")
+    location = page.get("location") or guess.get("location")
+    return {"company": company, "role": role, "location": location,
+            "source": guess.get("source"), "match": None, "from": "page" if page.get("role") else "url"}
 
 
 @app.post("/api/applications")
